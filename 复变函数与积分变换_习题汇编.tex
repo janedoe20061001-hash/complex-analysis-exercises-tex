@@ -39,7 +39,7 @@
 整理范围：习题一 P16--P17，习题二 P32--P33，习题三 P48--P50，习题四 P70--P73，
 习题五 P87--P89，习题六 P108--P110，习题七 P128--P132，习题八 P147--P151。
 
-正文按扫描页转录；对于原书中疑似印刷错误的公式，仍保留原书写法。
+正文按扫描页转录，并根据校对修正已确认的公式与文字错误。
 \end{center}
 
 \tableofcontents
@@ -258,7 +258,7 @@ z\overline z+\alpha\overline z+\overline\alpha z+c=0
 \item 证明。
   \begin{enumerate}
   \item $\cos(z_1+z_2)=\cos z_1\cos z_2-\sin z_1\sin z_2$，
-  $\sin(z_1+z_2)=\sin z_1\cos z_2-\cos z_1\sin z_2$；
+  $\sin(z_1+z_2)=\sin z_1\cos z_2+\cos z_1\sin z_2$；
   \item $\sin^2z+\cos^2z=1$；
   \item $\sin2z=2\sin z\cos z$；
   \item $\tan2z=\dfrac{2\tan z}{1-\tan^2z}$；
@@ -386,7 +386,7 @@ $f(z)=\dfrac{\partial u}{\partial x}-\ii\dfrac{\partial u}{\partial y}$，$f$ �
 
 \item 如果 $f(z)=u+\ii v$ 是一解析函数，试证：
   \begin{enumerate}
-  \item $\ii f(z)$ 也是解析函数；
+  \item $\overline{\ii\,\overline{f(z)}}$ 也是解析函数；
   \item $-u$ 是 $v$ 的共轭调和函数。
   \end{enumerate}
 
@@ -422,7 +422,7 @@ $\displaystyle\oint_C\dfrac{f'(z)}{f(z)}\dd z$ 是否为零？为什么？
 \item 判断下列级数敛散性。
   \begin{enumerate}
   \item $\displaystyle\sum_{n=1}^{\infty}\frac{\ii^n}{n}$；
-  \item $\displaystyle\sum_{n=1}^{\infty}\frac{\ii^n}{\ln n}$；
+  \item $\displaystyle\sum_{n=2}^{\infty}\frac{\ii^n}{\ln n}$；
   \item $\displaystyle\sum_{n=1}^{\infty}\frac{(6+5\ii)^n}{8^n}$；
   \item $\displaystyle\sum_{n=1}^{\infty}\frac{\cos(\ii n)}{2^n}$。
   \end{enumerate}
@@ -431,7 +431,7 @@ $\displaystyle\oint_C\dfrac{f'(z)}{f(z)}\dd z$ 是否为零？为什么？
   \begin{enumerate}
   \item $\displaystyle\sum_{n=0}^{\infty}\frac n{2^n}z^n$；
   \item $\displaystyle\sum_{n=0}^{\infty}\frac{z^n}{n!}$；
-  \item $\displaystyle\sum_{n=0}^{\infty}\frac{n!}{n^n}z^n$。
+  \item $\displaystyle\sum_{n=1}^{\infty}\frac{n!}{n^n}z^n$。
   \end{enumerate}
 
 \item 下列结论是否正确？为什么？
@@ -470,7 +470,7 @@ $\displaystyle\sum_{n=0}^{\infty}(\Ree a_n)z^n$ 的收敛半径 $\geqslant R$。
   \item $\dfrac1{4-3z},\ z_0=1+\ii$；
   \item $f(z)=\displaystyle\int_0^z\ee^{\xi^2}\dd\xi,\ z_0=0$；
   \item $\sin(2z-z^2),\ z_0=1$；
-  \item $\ee^{2\ln(1+z)},\ z_0=0$；
+  \item $\ee^{z\ln(1+z)},\ z_0=0$；
   \item $[\ln(1+z)]^2,\ z_0=0$；
   \item $\ln z,\ z_0=1$；
   \item $\ee^{1/(1-z)},\ z_0=0$。
@@ -499,7 +499,7 @@ $\displaystyle\sum_{n=0}^{\infty}(\Ree a_n)z^n$ 的收敛半径 $\geqslant R$。
   \item $\sin\dfrac1{1-z}$；
   \item $\ee^{z-1/z}$；
   \item $\sin\dfrac1z+\dfrac1{z^2}$；
-  \item $\ee^{1/(1-z)}$；
+  \item $\ee^{z/(1-z)}$；
   \item $\dfrac{z^{2n}}{1+z^n}$；
   \item $\dfrac{\ln(z+1)}z$；
   \item $\dfrac{\ee^{1/(1-z)}}{\ee^z-1}$。
@@ -598,7 +598,7 @@ $\displaystyle F(z)=\int_{z_0}^z f(\xi)\dd\xi$ 在点 $z_0$ 的性质如何？
   \item $f(z)=\dfrac{2z}{3+z^2}$。
   \end{enumerate}
 
-\item 设函数 $f(z)$ 在 $z=\infty$ 有可去奇点，求 $\Res[f(z),\infty]$。
+\item 设函数 $f(z)$ 在 $z=\infty$ 有可去奇点，求 $\Res[f^2(z),\infty]$。
 
 \item 计算下列各积分，$C$ 为正向圆周。
   \begin{enumerate}
@@ -612,7 +612,7 @@ $\displaystyle F(z)=\int_{z_0}^z f(\xi)\dd\xi$ 在点 $z_0$ 的性质如何？
 
 \item 试求下列各积分的值。
   \begin{enumerate}
-  \item $\displaystyle\int_0^{2\pi}\frac{\dd\theta}{a+\cos\theta}\quad(a<1)$；
+  \item $\displaystyle\int_0^{2\pi}\frac{\dd\theta}{a+\cos\theta}\quad(a>1)$；
   \item $\displaystyle\int_0^\pi\frac{\cos2\theta}{1-2a\cos\theta+a^2}\dd\theta\quad(a^2<1)$；
   \item $\displaystyle\int_{-\infty}^{\infty}\frac{\dd x}{x^2+2x+2}$；
   \item $\displaystyle\int_{-\infty}^{\infty}\frac{x\dd x}{(1+x^2)(x^2+2x+2)}$；
@@ -625,7 +625,7 @@ $\displaystyle F(z)=\int_{z_0}^z f(\xi)\dd\xi$ 在点 $z_0$ 的性质如何？
   \item $\displaystyle\int_0^{\infty}\frac{x^2-b^2}{x^2+b^2}\cdot\frac{\sin ax}{x}\dd x\quad(a>0)$。
   \end{enumerate}
 
-\item 设 $f(z)$ 在 $z$ 平面上解析，$f(z)=\displaystyle\sum_{n=0}^{\infty}a_nz^n$，则对任一正数 $k$，求
+\item 设 $f(z)$ 在 $z$ 平面上解析，$f(z)=\displaystyle\sum_{n=0}^{\infty}a_nz^n$，则对任一正整数 $k$，求
 $\displaystyle\Res\left[\frac{f(z)}{z^k},0\right]$。
 
 \item 若 $f(z)$ 和 $g(z)$ 在点 $z_0$ 处解析，而且 $f(z_0)\ne0$，$g(z)$ 以 $z_0$ 为二级零点，证明：
@@ -651,7 +651,7 @@ $\displaystyle\Res\left[\frac{f(z)}{z^k},0\right]$。
 \[
 f(z)=\prod_{k=1}^{n}\left(\frac{z-a_k}{1-\overline{a_k}z}\right),
 \]
-则方程 $f(z)=b$ 在圆 $|z|<1$ 内有 $n$ 个根；若 $|b|>1$，则方程 $f(z)=b$ 在圆 $|z|>1$ 内恰有 $n$ 个根。
+则方程 $f(z)=b$ 在圆 $|z|<1$ 内有 $n$ 个根；若 $|b|>1$，则方程 $f(z)=b$ 在圆 $|z|\leqslant1$ 以外的区域恰有 $n$ 个根。
 \end{enumerate}
 
 \newpage
@@ -730,7 +730,7 @@ $z_1=\sqrt2\ii,z_2=0,z_3=1$ 依次映射成 $w_1=0,w_2=\infty,w_3=-1$ 的保形�
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.58\textwidth]{figures/图6-26.png}
+\includegraphics[width=0.58\textwidth]{figures/图6-26_修正版.png}
 \caption{题 17 所用图（教材图 6.26）}
 \label{fig:626}
 \end{figure}
@@ -745,6 +745,50 @@ $\dfrac1{2\sqrt{2\pi}}\Gamma^2\!\left(\dfrac14\right)$ 的正方形内部。
 \item 试将 $\Imm z>0$ 保形映射成具有锐角 $\pi/6,\pi/3$ 的直角三角形，而且使 $z=0,1,\infty$ 分别与
 $w=0,a,a+\dfrac a{\sqrt3}\ii$ 对应（$a>0$）。
 \end{enumerate}
+
+% 补充参考：T. A. Driscoll, Schwarz--Christoffel Toolbox User's Guide, §2.1.
+% https://citeseerx.ist.psu.edu/document?doi=e1b349f7c2e13ca5903fa87f0e7289e91ecd4adc&repid=rep1&type=pdf
+\subsection*{补充：施瓦茨--克里斯托费尔公式}
+
+施瓦茨--克里斯托费尔（Schwarz--Christoffel）公式用于构造上半平面
+$\Imm z>0$ 到多边形内部的共形映射。先以具有有限顶点的简单多边形为例：
+设按边界正向排列的顶点为 $w_1,\ldots,w_n$，相应内角为
+$\alpha_1\pi,\ldots,\alpha_n\pi$，其中 $0<\alpha_j<2$，且
+$\sum_{j=1}^n\alpha_j=n-2$。
+选择这些顶点在扩充实轴上的原像为
+$x_1<x_2<\cdots<x_{n-1}$ 及 $x_n=\infty$，则映射具有形式
+\[
+\boxed{\displaystyle
+w=f(z)=C_0+C_1\int_{z_0}^{z}
+\prod_{j=1}^{n-1}(\zeta-x_j)^{\alpha_j-1}\dd\zeta,
+\qquad C_1\ne0.}
+\]
+这里 $z_0$ 是上半平面内的固定基点，积分路径取在上半平面内；各幂函数在该域内
+选取一致的解析分支，例如令 $0<\Arg(\zeta-x_j)<\pi$。
+常数 $C_0$ 控制平移，$C_1$ 控制伸缩和旋转；原像点 $x_j$ 及这些常数
+需由多边形的形状、边长和指定的点对应关系确定。
+
+\noindent\textbf{使用要点：}
+每个有限原像点对应的因子，其指数等于“像域在该顶点处的内角除以 $\pi$，再减 $1$”，即
+\[
+f'(z)=C_1\prod_{j=1}^{n-1}(z-x_j)^{\alpha_j-1},
+\qquad
+\begin{array}{c|cccc}
+\text{内角} & \pi/6 & \pi/3 & \pi/2 & 3\pi/2\\
+\hline
+\text{指数} & -5/6 & -2/3 & -1/2 & 1/2
+\end{array}
+\]
+当某个顶点的原像选为 $\infty$ 时，乘积中省去该点对应的因子，其角度由映射在无穷远处
+的行为体现；不能写成 $(z-\infty)^{\alpha_n-1}$。
+例如，三角形的三个顶点原像取为 $0,1,\infty$，对应内角为
+$\alpha\pi,\beta\pi,\gamma\pi$，其中 $\alpha+\beta+\gamma=1$，则
+\[
+w=C_0+C_1\int_{z_0}^{z}
+\zeta^{\alpha-1}(\zeta-1)^{\beta-1}\dd\zeta.
+\]
+对于图 6.26 这类含无穷远顶点的无界多边形，还需结合无穷远处的边界走向，
+采用相应的广义内角约定或由有限多边形取极限，不能将无穷远顶点当作普通有限顶点套用内角。
 
 
 \newpage
@@ -817,7 +861,7 @@ $\displaystyle f(t)=\begin{cases}1,&|t|<1,\\0,&|t|>1,
   \begin{enumerate}
   \item $f(t)=H(t)\sin(\omega_0t)$；
   \item $f(t)=H(t)\cos(\omega_0t)$；
-  \item $f(t)=H(t-\ii)$；
+  \item $f(t)=H(t-\tau)$；
   \item $\displaystyle f(t)=\frac12\left[\delta(t+t_0)+\delta(t-t_0)+\delta\left(t+\frac{t_0}{2}\right)+\delta\left(t-\frac{t_0}{2}\right)\right]$；
   \item $f(t)=\cos t\sin t$；
   \item $\displaystyle f(t)=\begin{cases}\ee^{-at},&t>0,\\\ee^{at},&t<0,
@@ -884,7 +928,7 @@ r=\int_{-1}^{1}\exp\!\left(-\frac{t^2}{1-t^2}\right)\dd t,
 
 \item 设 $f(t)$ 在 $(-\infty,\infty)$ 上连续可微，求证
 \[
-f(t)\delta'(t-t_0)=f(t_0)\delta'(t-t_0)-f'(t_0)\delta'(t-t_0)
+f(t)\delta'(t-t_0)=f(t_0)\delta'(t-t_0)-f'(t_0)\delta(t-t_0)
 \qquad(-\infty<t<\infty).
 \]
 
@@ -1001,7 +1045,7 @@ f(t)=\begin{cases}\sin t,&0<t\leqslant\pi,\\0,&\pi<t<2\pi,
   \item $f(t)=3t^4-2t^{3/2}+6$；
   \item $f(t)=1-t\ee^t$；
   \item $f(t)=3\sqrt[3]t+4\ee^{2t}$；
-  \item $f(t)=\dfrac t{2\alpha}\sin at$；
+  \item $f(t)=\dfrac t{2a}\sin at$；
   \item $f(t)=\dfrac{\sin at}{t}$；
   \item $f(t)=5\sin2t-3\cos2t$；
   \item $f(t)=\ee^{-3t}\cos4t$；
@@ -1106,7 +1150,7 @@ $\mathcal L[f_1(t)]=F_1(s)$，$\mathcal L[f_2(t)]=F_2(s)$，则乘积 $f_1(t)f_2
   \item $\displaystyle\begin{cases}y'-2z'=f(t),\\y''-z''+z=0,\end{cases}\quad y(0)=y'(0)=z(0)=z'(0)=0$；
   \item $\displaystyle\begin{cases}(2x''-x'+9x)-(y''+y'+3y)=0,\\(2x''+x'+7x)-(y''-y'+5y)=0,
   \end{cases}\quad x(0)=x'(0)=1,\ y(0)=y'(0)=0$；
-  \item $\displaystyle\begin{cases}x''-x+y+z=0,\\x+y'-y+z=0,\\x+y+z''-z=0,
+  \item $\displaystyle\begin{cases}x''-x+y+z=0,\\x+y''-y+z=0,\\x+y+z''-z=0,
   \end{cases}\quad x(0)=1,\ y(0)=z(0)=x'(0)=y'(0)=z'(0)=0$。
   \end{enumerate}
 
@@ -1162,12 +1206,35 @@ $\mathcal L[f_1(t)]=F_1(s)$，$\mathcal L[f_2(t)]=F_2(s)$，则乘积 $f_1(t)f_2
 \item 试求下列积分方程的解。
   \begin{enumerate}
   \item $\displaystyle y(t)=at+\int_0^t y(\tau)\sin(t-\tau)\dd\tau$；
-  \item $\displaystyle y(t)=a\sin bt+\int_0^t y(\tau)\sin b(t-\tau)\dd\tau$，其中 $b>c>0$。
+  \item $\displaystyle y(t)=a\sin bt+c\int_0^t y(\tau)\sin b(t-\tau)\dd\tau$，其中 $b>c>0$。
   \end{enumerate}
 
 \item 设在原处质量为 $m$ 的一质点在 $t=0$ 时，在 $x$ 方向上受到冲击力 $k\delta(t)$ 的作用，其中 $k$ 为常数，假定质点的初速度为零，求其运动规律。
 
 \item 某系统的传递函数 $H(s)=\dfrac{k}{1+Ts}$，求当激励 $x(t)=A\sin\omega t$ 时的系统响应 $y(t)$。
+
+% 注解参考：University of Michigan, Control Tutorials, Introduction: System Modeling.
+% https://ctms.engin.umich.edu/CTMS/index.php?example=Introduction&section=SystemModeling
+\par\smallskip
+\noindent\textbf{注：什么是传递函数？}
+对于线性时不变系统，在\textbf{零初始条件}（系统初始储能或初始状态为零）下，
+传递函数是输出与输入的拉普拉斯变换之比：
+\[
+H(s)=\frac{Y(s)}{X(s)},\qquad
+X(s)=\mathcal L[x(t)],\quad Y(s)=\mathcal L[y(t)].
+\]
+它描述系统怎样把输入（激励）变成输出（响应），由系统本身决定。
+已知输入后，可先求 $Y(s)=H(s)X(s)$，再作拉氏逆变换得到 $y(t)$；
+这里取比值的是拉氏变换，不能理解成时域中直接计算 $y(t)/x(t)$。
+
+本题按系统初始静止、正弦激励从 $t=0$ 开始作用理解，因而
+\[
+X(s)=\frac{A\omega}{s^2+\omega^2},\qquad
+Y(s)=\frac{kA\omega}{(1+Ts)(s^2+\omega^2)}.
+\]
+对这个 $Y(s)$ 求逆变换即可得到所求的零状态响应。
+等价地，本题的输入输出满足 $T y'(t)+y(t)=k x(t)$，并取 $y(0)=0$。
+若初始状态非零，还需另计初始状态引起的响应，仅凭 $Y(s)=H(s)X(s)$ 不能得到总响应。
 \end{enumerate}
 
 \newpage
