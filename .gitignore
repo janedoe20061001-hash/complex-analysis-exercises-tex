@@ -1,0 +1,18 @@
+# LaTeX build artifacts
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.toc
+*.xdv
+
+# Local temporary files
+tmp/
+
+# Editor and operating-system files
+.DS_Store
+Thumbs.db
+*.swp
+*~
