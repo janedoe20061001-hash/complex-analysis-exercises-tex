@@ -1,0 +1,1037 @@
+\documentclass[UTF8,11pt,a4paper,fontset=fandol]{ctexart}
+\usepackage{amsmath,amssymb,mathtools,geometry,enumitem,xcolor,hyperref,needspace}
+\geometry{top=2.1cm,bottom=2.1cm,left=2.35cm,right=2.35cm}
+\hypersetup{colorlinks=true,linkcolor=blue!45!black,pdftitle={习题四详细解答}}
+\pagestyle{plain}
+\setlength{\parindent}{2em}
+\setlength{\parskip}{0.22em}
+\setlist[enumerate,1]{label=(\arabic*),leftmargin=2.8em,itemsep=0.65em,topsep=0.35em}
+\setlist[enumerate,2]{label=\arabic*.,leftmargin=2.6em,itemsep=0.4em,topsep=0.25em}
+\allowdisplaybreaks[2]
+\newcommand{\ii}{\mathrm{i}}
+\newcommand{\ee}{\mathrm{e}}
+\newcommand{\dd}{\,\mathrm{d}}
+\newcommand{\Ree}{\operatorname{Re}}
+\newcommand{\Res}{\operatorname{Res}}
+\newcommand{\idea}{\par\medskip\Needspace{3\baselineskip}\noindent\textbf{分析思路}\quad}
+\newcommand{\answer}{\par\medskip\Needspace{3\baselineskip}\noindent\textbf{详细解答}\quad}
+\newcommand{\note}{\par\medskip\Needspace{3\baselineskip}\noindent\textbf{说明}\quad}
+\newcommand{\problem}[1]{\par\Needspace{8\baselineskip}\section*{第 #1 题}\addcontentsline{toc}{section}{第 #1 题}}
+\makeatletter
+\renewcommand{\l@section}{\@dottedtocline{1}{0em}{1.5em}}
+\makeatother
+
+\begin{document}
+\begin{center}
+{\Large\bfseries 复变函数与积分变换\par}
+\vspace{0.5em}
+{\Large 第四章习题四详细解答\par}
+\end{center}
+\medskip
+本章面向刚学完复数项级数、幂级数、Taylor 级数、Laurent 级数与孤立奇点的同学。每题先说明判断入口，再把关键计算写完整。级数展开题除给出通项外，还列出若干低次项，便于核对常数项以及正、负幂项；奇点判别题则尽量指出决定类型的局部因子或 Laurent 级数。
+
+全文中的对数均指在题目所讨论邻域内选定的解析分支；涉及无穷远点时，统一令 $w=1/z$，把 $z=\infty$ 的问题化为 $w=0$ 的问题。
+
+{\setlength{\parskip}{0pt}\tableofcontents}
+\newpage
+
+\section*{做题前的几个提醒}
+\addcontentsline{toc}{section}{做题前的几个提醒}
+\begin{enumerate}
+\item 复数列 $a_n=x_n+\ii y_n$ 收敛，当且仅当两个实数列 $x_n,y_n$ 都收敛；也可以直接证明 $|a_n-a|\to0$。
+\item 幂级数的收敛半径只决定开圆内部与外部的情形，圆周上的敛散性必须另行判断。
+\item Taylor 展开的半径等于展开中心到最近奇点的距离；Laurent 展开则必须同时看展开中心和指定圆环。
+\item 判别孤立奇点时，先约去可能消去的零因子，再看局部展开。若奇点在任意邻域内还聚集着别的奇点，它不是孤立奇点，不能再分成可去、极点或孤立本性奇点。
+\end{enumerate}
+
+\long\def\laterproblems{%
+\problem{11}
+\textbf{题目}\quad 找出下列函数的孤立奇点，判明类型；若为极点，指出级数：
+\begin{enumerate}
+\item $\dfrac1{z^3(z^2+1)^2}$；
+\item $\dfrac{\ee^z\sin z}{z^2}$；
+\item $\dfrac1{z^3-z^2-z+1}$；
+\item $\dfrac1{\sin z}$；
+\item $\dfrac z{(1+z^2)(1+\ee^z)}$；
+\item $\sin\dfrac1{1-z}$；
+\item $\ee^{z-1/z}$；
+\item $\sin\dfrac1z+\dfrac1{z^2}$；
+\item $\ee^{z/(1-z)}$；
+\item $\dfrac{z^{2n}}{1+z^n}$；
+\item $\dfrac{\ln(1+z)}z$；
+\item $\dfrac{\ee^{1/(1-z)}}{\ee^z-1}$。
+\end{enumerate}
+\idea 对商函数先找分母的零点并检查能否约去；对含 $\ee^{1/(z-z_0)}$、$\sin(1/(z-z_0))$ 的函数，直接观察其 Laurent 级数是否含无穷多个负幂项。
+\answer
+\begin{enumerate}
+\item
+\[
+f(z)=\frac1{z^3(z-\ii)^2(z+\ii)^2}.
+\]
+其分子恒不为零，所以 $z=0$ 是三级极点，$z=\ii,-\ii$ 均为二级极点。
+\item 因 $\sin z=z+O(z^3)$ 且 $\ee^z=1+O(z)$，
+\[
+\frac{\ee^z\sin z}{z^2}=\frac1z\,[1+O(z)].
+\]
+故唯一孤立奇点 $z=0$ 是一级极点。
+\item 分母可分解为
+\[
+z^3-z^2-z+1=(z-1)^2(z+1).
+\]
+因此 $z=1$ 是二级极点，$z=-1$ 是一级极点。
+\item $\sin z$ 的零点为 $z=k\pi$，且 $(\sin z)'|_{z=k\pi}=(-1)^k\ne0$。所以每个 $k\pi$ 都是 $1/\sin z$ 的一级极点。
+\item $1+z^2$ 在 $z=\pm\ii$ 有简单零点；$1+\ee^z$ 在
+\[
+z=(2k+1)\pi\ii,\qquad k\in\mathbb Z,
+\]
+也有简单零点。这两组点互不重合，且分子在这些点都不为零，故它们全是一级极点。$z=0$ 不是奇点。
+\item 令 $w=z-1$，则
+\[
+\sin\frac1{1-z}=-\sin\frac1w
+=-w^{-1}+\frac1{3!}w^{-3}-\frac1{5!}w^{-5}+\cdots.
+\]
+主部含无穷多项，故 $z=1$ 是本性奇点。
+\item
+\[
+\ee^{z-1/z}=\ee^z\sum_{n=0}^{\infty}\frac{(-1)^n}{n!}z^{-n}.
+\]
+$\ee^z$ 在 $0$ 附近解析且不为零，不能消去无穷多个负幂项，故 $z=0$ 是本性奇点。
+\item
+\[
+\sin\frac1z+\frac1{z^2}
+=\frac1z+\frac1{z^2}-\frac1{3!z^3}+\frac1{5!z^5}-\cdots.
+\]
+主部仍有无穷多项，故 $z=0$ 是本性奇点。
+\item 因
+\[
+\frac z{1-z}=-1+\frac1{1-z},
+\qquad
+\ee^{z/(1-z)}=\ee^{-1}\ee^{1/(1-z)},
+\]
+故 $z=1$ 是本性奇点。
+\item 设 $n$ 为正整数。方程 $1+z^n=0$ 的 $n$ 个根为
+\[
+z_k=\exp\frac{(2k+1)\pi\ii}{n},\qquad k=0,1,\ldots,n-1.
+\]
+这些根都非零，且 $(1+z^n)'=nz^{n-1}$ 在根处不为零；分子也不为零。因此每个 $z_k$ 都是一级极点。$z=0$ 处函数解析，并有 $2n$ 级零点。
+\item 在 $|z|<1$ 内，
+\[
+\frac{\ln(1+z)}z
+=1-\frac z2+\frac{z^2}3-\cdots,
+\]
+所以 $z=0$ 是可去奇点，补定义值为 $1$。点 $z=-1$ 是对数的分支点，不是孤立奇点，因而不能把它说成某级极点。
+\item $z=1$ 处，分母 $\ee-1\ne0$，而分子有本性奇点，所以 $z=1$ 是本性奇点。又因 $\ee^z-1$ 在 $z=2k\pi\ii$ 有简单零点，分子在这些点解析且不为零，故
+\[
+z=2k\pi\ii,\quad k\in\mathbb Z,
+\]
+全是一级极点，其中也包括 $z=0$。
+\end{enumerate}
+
+\problem{12}
+\textbf{题目}\quad 指出下列函数在无穷远点的性质：
+\[
+\frac1{z-z^3},\quad \frac{z^4}{1+z^4},\quad
+\frac{z^6}{(z^2-3)^2\cos\dfrac1{z-2}},\quad
+\frac1{\ee^z-1}-\frac1z,\quad
+\frac{\ee^z}{z(1-\ee^{-z})},\quad
+\ee^{-z}\cos\frac1z.
+\]
+\idea 令 $F(w)=f(1/w)$。$F$ 在 $w=0$ 的可去奇点、极点或本性奇点，分别对应 $f$ 在 $\infty$ 的可去奇点、极点或本性奇点；若有限奇点无限地向外延伸，则 $\infty$ 不是孤立奇点。
+\answer
+\begin{enumerate}
+\item
+\[
+f(1/w)=\frac{w^3}{w^2-1}=-\frac{w^3}{1-w^2}.
+\]
+它在 $w=0$ 解析并有三级零点，故 $z=\infty$ 是可去奇点，补定义值为 $0$；更精确地说，$f$ 在无穷远点有三级零点。
+\item
+\[
+f(1/w)=\frac1{1+w^4}
+\]
+在 $w=0$ 解析且值为 $1$。因此 $z=\infty$ 是可去奇点，补定义值为 $1$。
+\item
+\[
+f(1/w)=
+\frac{w^{-2}}{(1-3w^2)^2\cos\!\left(\frac{w}{1-2w}\right)}.
+\]
+方括号以外的两个因子在 $w=0$ 解析且值为 $1$，所以 $w=0$ 是二级极点，即 $z=\infty$ 是二级极点。
+\item 在 $z=2k\pi\ii$（$k\ne0$）处有一级极点，而且这些极点的模无界。故任意无穷远点的邻域内都还有别的奇点，$z=\infty$ 是非孤立奇点。$z=0$ 处的两个主部相消，不影响这一结论。
+\item
+\[
+\frac{\ee^z}{z(1-\ee^{-z})}=\frac{\ee^{2z}}{z(\ee^z-1)}.
+\]
+它在 $z=2k\pi\ii$ 处有极点，并且这组极点无界，因此 $z=\infty$ 是非孤立奇点。
+\item 令 $w=1/z$，则
+\[
+f(1/w)=\ee^{-1/w}\cos w.
+\]
+$\cos w$ 在 $0$ 附近解析且不为零，而 $\ee^{-1/w}$ 在 $0$ 有本性奇点，故 $z=\infty$ 是本性奇点。
+\end{enumerate}
+
+\problem{13}
+\textbf{题目}\quad $f,g$ 分别在 $z_0$ 有 $m$ 级和 $n$ 级极点，判断 $f+g$、$fg$、$f/g$ 在 $z_0$ 的性质。
+\idea 把极点写成“非零解析因子除以相应幂次”，便能看清阶数相加、相减以及首项抵消的可能。
+\answer 写成
+\[
+f(z)=\frac{\varphi(z)}{(z-z_0)^m},\qquad
+g(z)=\frac{\psi(z)}{(z-z_0)^n},
+\]
+其中 $\varphi,\psi$ 在 $z_0$ 解析且 $\varphi(z_0)\psi(z_0)\ne0$。
+\begin{enumerate}
+\item 若 $m\ne n$，最高阶主部不可能抵消，故 $f+g$ 有 $\max\{m,n\}$ 级极点。若 $m=n$，则
+\[
+f+g=\frac{\varphi+\psi}{(z-z_0)^m}.
+\]
+当 $\varphi(z_0)+\psi(z_0)\ne0$ 时仍为 $m$ 级极点；若首项抵消，极点级数会降低，也可能成为可去奇点，甚至补定义后出现零点。
+\item
+\[
+fg=\frac{\varphi\psi}{(z-z_0)^{m+n}},
+\]
+所以 $fg$ 有 $m+n$ 级极点。
+\item
+\[
+\frac fg=(z-z_0)^{n-m}\frac{\varphi}{\psi}.
+\]
+若 $m>n$，它有 $m-n$ 级极点；若 $m=n$，奇点可去且补定义值为 $\varphi(z_0)/\psi(z_0)\ne0$；若 $m<n$，补定义后有 $n-m$ 级零点。
+\end{enumerate}
+
+\problem{14}
+\textbf{题目}\quad 若 $f$ 在 $z_0$ 解析，$g$ 在 $z_0$ 有本性奇点，判断 $f+g$、$fg$、$f/g$ 的性质。
+\idea 题设只有 $g$ 是本性奇点，$f$ 在 $z_0$ 解析。用本章已经学过的 Laurent 级数和零点分解即可讨论；第三问还要看 $g$ 的零点是否向 $z_0$ 聚集。
+\answer
+\begin{enumerate}
+\item 设 $g$ 在 $z_0$ 的 Laurent 级数为
+\[
+g(z)=\sum_{n=-\infty}^{\infty}b_n(z-z_0)^n,
+\]
+其中有无穷多个负幂项的系数不为零。解析函数 $f$ 只有非负幂项，所以相加后不可能把这些负幂项全部消掉。因此 $f+g$ 必在 $z_0$ 有本性奇点。
+
+\item 若 $f$ 在 $z_0$ 的某邻域内恒等于零，则 $fg\equiv0$，当然可以解析延拓。
+
+若 $f$ 不恒为零，则可写成
+\[
+f(z)=(z-z_0)^m\varphi(z),\qquad
+m\ge0,\quad \varphi(z_0)\ne0.
+\]
+乘以 $(z-z_0)^m$ 只能把 $g$ 的 Laurent 级数整体移动有限项，乘以在 $z_0$ 不为零的 $\varphi$ 也不能消去无穷多个负幂项。因此 $fg$ 仍在 $z_0$ 有本性奇点。
+
+\item $f/g$ 没有无条件的单一结论。
+
+若 $f\equiv0$，则商在原来有定义的点恒为零，并可补成零函数。
+
+现在设 $f$ 不恒为零。若 $g$ 在某个穿孔邻域
+$0<|z-z_0|<\delta$ 内没有零点，则 $h=f/g$ 在该穿孔邻域内解析。假设 $h$ 只是可去奇点或极点，就可以写成
+\[
+h(z)=(z-z_0)^p\psi(z),\qquad
+p\in\mathbb Z,\quad \psi(z_0)\ne0,
+\]
+其中 $p>0$ 表示零点，$p=0$ 表示补定义后不为零，$p<0$ 表示极点。结合
+$f=(z-z_0)^m\varphi$，便有
+\[
+g(z)=\frac{f(z)}{h(z)}
+=(z-z_0)^{m-p}\frac{\varphi(z)}{\psi(z)}.
+\]
+右端在 $z_0$ 至多只有有限阶的零点或极点，不可能是本性奇点，产生矛盾。因此这种情况下 $f/g$ 是本性奇点。例如
+\[
+f(z)=1,\qquad g(z)=\ee^{1/(z-z_0)}
+\]
+时，$f/g=\ee^{-1/(z-z_0)}$。
+
+若 $g$ 的零点不断向 $z_0$ 聚集，则在这些零点处 $f/g$ 通常产生一串极点，并且这些极点也向 $z_0$ 聚集，此时 $z_0$ 是非孤立奇点。例如
+\[
+f(z)=1,\qquad g(z)=\sin\frac1{z-z_0}.
+\]
+\end{enumerate}
+
+\problem{15}
+\textbf{题目}\quad 证明：若 $z_0$ 是 $f$ 的 $m$ 级零点（$m\ge2$），则 $z_0$ 是 $f'$ 的 $m-1$ 级零点。
+\idea 使用零点的标准因式分解 $f(z)=(z-z_0)^m\varphi(z)$，再求导并检查剩余因子在 $z_0$ 的值。
+\answer 因 $z_0$ 是 $m$ 级零点，可写成
+\[
+f(z)=(z-z_0)^m\varphi(z),
+\]
+其中 $\varphi$ 在 $z_0$ 邻域解析且 $\varphi(z_0)\ne0$。求导得
+\begin{align*}
+f'(z)
+&=m(z-z_0)^{m-1}\varphi(z)+(z-z_0)^m\varphi'(z)\\
+&=(z-z_0)^{m-1}\bigl[m\varphi(z)+(z-z_0)\varphi'(z)\bigr].
+\end{align*}
+括号中的函数在 $z_0$ 解析，并且其在 $z_0$ 的值为 $m\varphi(z_0)\ne0$。所以 $f'$ 在 $z_0$ 恰有 $m-1$ 级零点。
+
+\problem{16}
+\textbf{题目}\quad 评析：由 $|z-2|>1$ 内的 Laurent 展开不含 $(z-2)^{-1}$ 项，断言 $z=2$ 是本性奇点且留数为零。
+\idea 奇点类型和留数必须由中心附近某个完整穿孔邻域内的 Laurent 展开判断；外圆环不包含任意靠近中心的点。
+\answer 令 $w=z-2$。在 $0<|w|<1$ 内，
+\[
+\frac1{(z-1)(z-2)^3}
+=\frac1{w^3(1+w)}
+=\frac1{w^3}-\frac1{w^2}+\frac1w-1+w-w^2+\cdots.
+\]
+主部只有三项，所以 $z=2$ 是三级极点；$w^{-1}$ 的系数为 $1$，故
+\[
+\Res[f,2]=1.
+\]
+
+题中另一个展开来自
+\[
+\frac1{w^3(1+w)}
+=\frac1{w^4}\frac1{1+1/w}
+=\frac1{w^4}-\frac1{w^5}+\frac1{w^6}-\cdots,
+\qquad |w|>1.
+\]
+这个圆环不包含靠近 $w=0$ 的点，因而不能用来判定 $w=0$ 的奇点类型，也不能用它读取 $z=2$ 的留数。两个断言都不正确。
+
+\problem{17}
+\textbf{题目}\quad 设 $\sum a_nz^n$ 的收敛半径 $R>0$、和函数为 $f$，证明 $|a_n|\le M(r)/r^n$，其中 $0<r<R$。
+\idea 在圆周 $|z|=r$ 上用 Cauchy 系数公式，再估计积分的长度。
+\answer Cauchy 系数公式给出
+\[
+a_n=\frac1{2\pi\ii}\oint_{|z|=r}\frac{f(z)}{z^{n+1}}\dd z.
+\]
+因此
+\begin{align*}
+|a_n|
+&\le\frac1{2\pi}\oint_{|z|=r}\frac{|f(z)|}{|z|^{n+1}}|\dd z|\\
+&\le\frac1{2\pi}\frac{M(r)}{r^{n+1}}\cdot2\pi r
+=\frac{M(r)}{r^n}.
+\end{align*}
+
+\problem{18}
+\textbf{题目}\quad 证明
+\[
+|\ee^z-1|\le\ee^{|z|}-1\le|z|\ee^{|z|},
+\]
+并在 $0<|z|<1$ 时证明 $\frac14|z|<|\ee^z-1|<\frac74|z|$。
+\idea 第一问直接估计指数级数。第二问把一次项 $z$ 与余项分开，并用一个简单的有理数上界 $\ee<11/4$。
+\answer
+\begin{enumerate}
+\item 由三角不等式，
+\[
+|\ee^z-1|
+=\left|\sum_{n=1}^{\infty}\frac{z^n}{n!}\right|
+\le\sum_{n=1}^{\infty}\frac{|z|^n}{n!}
+=\ee^{|z|}-1.
+\]
+对 $t=|z|\ge0$，
+\[
+\ee^t-1=\int_0^t\ee^s\dd s\le t\ee^t,
+\]
+第二个不等式也成立。
+\item 先说明 $\ee<11/4$：当 $n\ge2$ 时，$n!\ge2\cdot3^{n-2}$，且从某项起为严格不等式，于是
+\[
+\ee=2+\sum_{n=2}^{\infty}\frac1{n!}
+<2+\sum_{n=2}^{\infty}\frac1{2\cdot3^{n-2}}=\frac{11}{4}.
+\]
+令 $r=|z|<1$。上界为
+\[
+|\ee^z-1|\le\sum_{n=1}^{\infty}\frac{r^n}{n!}
+<r\sum_{n=1}^{\infty}\frac1{n!}=(\ee-1)r<\frac74r.
+\]
+下界用反三角不等式：
+\[
+|\ee^z-1|
+\ge r-\sum_{n=2}^{\infty}\frac{r^n}{n!}
+>r-r\sum_{n=2}^{\infty}\frac1{n!}
+=(3-\ee)r>\frac14r.
+\]
+\end{enumerate}
+
+\textbf{另一种证明思路。}第一个结论中的右侧不等式也可以完全按实变量函数来证明。令
+\[
+F(t)=t\ee^t-(\ee^t-1),\qquad t\ge0.
+\]
+因为 $F(0)=0$，且
+\[
+F'(t)=t\ee^t\ge0,
+\]
+所以 $F(t)\ge0$，即 $\ee^t-1\le t\ee^t$。取 $t=|z|$ 即得所需不等式。
+
+第二问还可以先把一次项整体提出：
+\[
+\ee^z-1
+=z\left(1+\sum_{n=2}^{\infty}\frac{z^{n-1}}{n!}\right).
+\]
+当 $r=|z|<1$ 时，
+\[
+\left|\sum_{n=2}^{\infty}\frac{z^{n-1}}{n!}\right|
+\le\sum_{n=2}^{\infty}\frac{r^{n-1}}{n!}
+<\sum_{n=2}^{\infty}\frac1{n!}
+=\ee-2<\frac34.
+\]
+于是
+\[
+r\,[1-(\ee-2)]<|\ee^z-1|<r\,[1+(\ee-2)],
+\]
+再由 $3-\ee>1/4$、$\ee-1<7/4$，同样得到
+\[
+\frac14|z|<|\ee^z-1|<\frac74|z|.
+\]
+
+\problem{19}
+\textbf{题目}\quad 设 $f(z)=(z-a)/(z+a)$，$a\ne0$，求 $\oint_C f(z)z^{-n-1}\dd z$，其中 $C$ 包含原点且位于 $|z|=|a|$ 内。
+\idea 在 $|z|<|a|$ 内把 $f$ 展成幂级数，再用 Cauchy 系数公式读取 $z^n$ 的系数。
+\answer 在 $|z|<|a|$ 内，
+\[
+f(z)=-1+\frac{2z/a}{1+z/a}
+=-1+2\sum_{k=1}^{\infty}(-1)^{k-1}\frac{z^k}{a^k}.
+\]
+所以其 Taylor 系数为
+\[
+c_0=-1,\qquad c_n=\frac{2(-1)^{n-1}}{a^n}\quad(n\ge1).
+\]
+由于 $C$ 及其内部都落在 $|z|<|a|$，Cauchy 系数公式给出
+\[
+\oint_C\frac{f(z)}{z^{n+1}}\dd z
+=2\pi\ii c_n
+=\begin{cases}
+-2\pi\ii,&n=0,\\[2mm]
+\displaystyle\frac{4\pi\ii(-1)^{n-1}}{a^n},&n\ge1.
+\end{cases}
+\]
+
+\problem{20}
+\textbf{题目}\quad 讨论下列函数在扩充复平面上的孤立奇点及类型：
+\begin{enumerate}
+\item $\sin\dfrac z{z+1}$；
+\item $\ee^{z+1/z}$；
+\item $\sin z\sin\dfrac1z$；
+\item $\dfrac{\sinh z}{\cosh z}$；
+\item $\sin\!\left(\dfrac1{\sin(1/z)}\right)$；
+\item $\tan^2z$；
+\item $\dfrac1{\sin z-\sin a}$；
+\item $\ee^{\tan(1/z)}$。
+\end{enumerate}
+\idea 有限点先找内层函数的极点或分母零点；无穷远点用 $w=1/z$。还要检查奇点是否向 $0$ 或 $\infty$ 聚集，因为聚点本身不是孤立奇点。
+\answer
+\begin{enumerate}
+\item 对
+\[
+f(z)=\sin\frac z{z+1},
+\qquad
+\frac z{z+1}=1-\frac1{z+1},
+\]
+$z=-1$ 处的正弦展开含无穷多个负幂项，故 $z=-1$ 是本性奇点。又
+\[
+f(1/w)=\sin\frac1{1+w}
+\]
+在 $w=0$ 解析，所以 $z=\infty$ 是可去奇点，补定义值为 $\sin1$。
+\item $\ee^{z+1/z}$ 在 $z=0$ 有本性奇点；换元后为 $\ee^{1/w+w}$，故 $z=\infty$ 也为本性奇点。
+\item 在 $z=0$，因 $\sin z=z+O(z^3)$，有限阶因子不能消去 $\sin(1/z)$ 的无穷主部，所以 $0$ 是本性奇点。换元后表达式不变为 $\sin(1/w)\sin w$，故 $\infty$ 也是本性奇点。
+\item
+\[
+\frac{\sinh z}{\cosh z}=\tanh z.
+\]
+$\cosh z$ 的零点 $z=(k+\frac12)\pi\ii$ 都是简单零点，且 $\sinh z$ 在这些点不为零，故它们全是一级极点。该组极点的模无界，所以 $\infty$ 是非孤立奇点。
+\item 先看 $\sin(1/z)=0$：对每个 $k\in\mathbb Z\setminus\{0\}$，
+\[
+z_k=\frac1{k\pi}
+\]
+是 $\sin(1/z)$ 的简单零点。因此 $1/\sin(1/z)$ 在 $z_k$ 有一级极点，外层再取正弦后，每个 $z_k$ 都成为本性奇点。这些点聚集到 $0$，故 $z=0$ 是非孤立奇点。
+
+在无穷远点令 $w=1/z$，得到 $\sin(1/\sin w)$。因 $\sin w\sim w$，其在 $w=0$ 有本性奇点，所以 $z=\infty$ 是孤立本性奇点。
+\item $\tan z$ 在 $z=\pi/2+k\pi$ 有一级极点，故 $\tan^2z$ 在这些点有二级极点。极点序列无界，所以 $\infty$ 是非孤立奇点。
+\item 利用
+\[
+\sin z-\sin a
+=2\cos\frac{z+a}{2}\sin\frac{z-a}{2}.
+\]
+若 $\cos a\ne0$，零点
+\[
+z=a+2k\pi,\quad z=\pi-a+2k\pi
+\]
+互不重合且均为简单零点，故都是一级极点。若 $\cos a=0$，两组零点重合，$\sin z-\sin a$ 在每个零点均为二级零点，故相应点是二级极点。无论哪种情况，极点都无界，因而 $\infty$ 是非孤立奇点。
+\item $\tan(1/z)$ 在
+\[
+z_k=\frac1{\pi/2+k\pi},\qquad k\in\mathbb Z,
+\]
+有一级极点，故 $\ee^{\tan(1/z)}$ 在每个 $z_k$ 有本性奇点。这些点聚集到 $0$，所以 $z=0$ 是非孤立奇点。换元后
+\[
+f(1/w)=\ee^{\tan w}
+\]
+在 $w=0$ 解析且值为 $1$，故 $z=\infty$ 是可去奇点，补定义值为 $1$。
+\end{enumerate}
+
+\problem{21}
+\textbf{题目}\quad 若解析函数 $f$ 在 $z_0$ 有 $m$ 级零点，判断 $F(z)=\int_{z_0}^z f(\xi)\dd\xi$ 在 $z_0$ 的性质。
+\idea 从 $f$ 的 Taylor 级数第一项开始逐项积分；积分会把首个非零项的次数提高一次。
+\answer 因 $f$ 在 $z_0$ 有 $m$ 级零点，存在解析函数 $\varphi$，使
+\[
+f(z)=(z-z_0)^m\varphi(z),\qquad \varphi(z_0)\ne0.
+\]
+等价地，局部 Taylor 展开为
+\[
+f(z)=a_m(z-z_0)^m+a_{m+1}(z-z_0)^{m+1}+\cdots,
+\qquad a_m\ne0.
+\]
+逐项积分得到
+\[
+F(z)=\frac{a_m}{m+1}(z-z_0)^{m+1}
++\frac{a_{m+1}}{m+2}(z-z_0)^{m+2}+\cdots.
+\]
+首项系数 $a_m/(m+1)\ne0$，所以 $F$ 在 $z_0$ 有 $m+1$ 级零点。
+
+}
+
+\problem{1}
+\textbf{题目}\quad 讨论下列数列的敛散性；若收敛，求其极限：
+\[
+\frac{1+n\ii}{1-n\ii},\qquad
+\left(1+\frac{\ii}{2}\right)^{-n},\qquad
+(-1)^n+\frac{\ii}{n+1},\qquad
+\frac1n\ee^{-n\pi\ii/2}.
+\]
+\idea 分别使用实部、虚部极限，或先估计模。若某个子列极限不同，原数列便发散。
+\answer
+\begin{enumerate}
+\item 分子分母同乘 $1+n\ii$，得
+\[
+a_n=\frac{1-n^2}{1+n^2}+\ii\frac{2n}{1+n^2}\longrightarrow-1.
+\]
+\item 因为
+\[
+\left|1+\frac{\ii}{2}\right|=\frac{\sqrt5}{2}>1,
+\]
+所以 $|a_n|=(2/\sqrt5)^n\to0$，从而 $a_n\to0$。
+\item 实部为 $(-1)^n$。偶数项子列趋于 $1$，奇数项子列趋于 $-1$，故数列发散。
+\item 指数因子的模为 $1$，所以 $|a_n|=1/n\to0$，从而 $a_n\to0$。
+\end{enumerate}
+
+\problem{2}
+\textbf{题目}\quad 判断下列级数的敛散性：
+\[
+\sum_{n=1}^{\infty}\frac{\ii^n}{n},\quad
+\sum_{n=2}^{\infty}\frac{\ii^n}{\ln n},\quad
+\sum_{n=1}^{\infty}\left(\frac{6+5\ii}{8}\right)^n,\quad
+\sum_{n=1}^{\infty}\frac{\cos(\ii n)}{2^n}.
+\]
+\idea 前两题利用 $\ii^n$ 的周期性与 Dirichlet 判别；后两题先观察一般项的模是否按几何速度衰减。
+\answer
+\begin{enumerate}
+\item $\sum_{k=1}^N\ii^k$ 有界，而 $1/n$ 单调趋于 $0$，由 Dirichlet 判别法，级数收敛。但
+\[
+\sum_{n=1}^{\infty}\left|\frac{\ii^n}{n}\right|=\sum_{n=1}^{\infty}\frac1n
+\]
+发散，故原级数条件收敛。
+\item 同理，$1/\ln n$ 从 $n\ge3$ 起单调趋于 $0$，故级数收敛；其绝对值级数 $\sum1/\ln n$ 发散，所以仍为条件收敛。
+\item 公比的模为 $\sqrt{61}/8<1$，故几何级数绝对收敛。
+\item 由 $\cos(\ii n)=\cosh n=(\ee^n+\ee^{-n})/2$，一般项含有 $\frac12(\ee/2)^n$。因 $\ee/2>1$，一般项不趋于 $0$，级数发散。
+\end{enumerate}
+
+\problem{3}
+\textbf{题目}\quad 求下列幂级数的收敛半径：
+\[
+\sum_{n=0}^{\infty}\frac n{2^n}z^n,\quad
+\sum_{n=0}^{\infty}\frac{z^n}{n!},\quad
+\sum_{n=1}^{\infty}\frac{n!}{n^n}z^n.
+\]
+\idea 使用相邻系数比值；第三题的极限是经典极限 $(1+1/n)^n\to\ee$。
+\answer
+\begin{enumerate}
+\item $\lim_{n\to\infty}|a_n/a_{n+1}|=2$，故 $R=2$。
+\item $|a_n/a_{n+1}|=n+1\to\infty$，故 $R=\infty$。
+\item
+\[
+\left|\frac{a_n}{a_{n+1}}\right|
+=\frac{n!}{n^n}\frac{(n+1)^{n+1}}{(n+1)!}
+=\left(1+\frac1n\right)^n\longrightarrow\ee,
+\]
+故 $R=\ee$。
+\end{enumerate}
+
+\problem{4}
+\textbf{题目}\quad 判断下列说法是否正确，并说明理由：幂级数在收敛圆及圆周上都收敛；每个幂级数都收敛到解析函数；在一点连续的函数必能在该点邻域内展开成 Taylor 级数。
+\idea 注意“收敛圆内”“存在非空收敛圆”和“解析”是三个不同层次的条件。
+\answer
+\begin{enumerate}
+\item 错。圆周上的敛散性不能由半径决定。例如 $\sum z^n/n$ 的半径为 $1$，在 $z=1$ 发散。
+\item 错。若收敛半径 $R=0$，级数只在中心收敛，谈不上在邻域内定义解析函数；只有在收敛圆 $|z-z_0|<R$ 内，和函数才解析。
+\item 错。可展开成 Taylor 级数要求函数在某邻域内解析，连续远远不够。例如 $f(z)=\overline z$ 在全平面连续，却在任何开集上都不解析。
+\end{enumerate}
+
+\problem{5}
+\textbf{题目}\quad 幂级数 $\sum_{n=0}^{\infty}a_n(z-2)^n$ 能否在 $z=0$ 收敛而在 $z=3$ 发散？
+\idea 比较两点到展开中心 $2$ 的距离。
+\answer 不能。在 $z=0$ 收敛说明收敛半径 $R\ge|0-2|=2$；而 $|3-2|=1<R$，所以在 $z=3$ 必绝对收敛，与“发散”矛盾。
+
+\problem{6}
+\textbf{题目}\quad 若 $\sum a_nz^n$ 的收敛半径为 $R$，证明 $\sum(\Ree a_n)z^n$ 的收敛半径不小于 $R$。
+\idea 在任意较小圆盘 $|z|<R$ 内，原级数绝对收敛，再用 $|\Ree a_n|\le|a_n|$ 比较。
+\answer 任取 $r<R$。当 $|z|\le r$ 时，$\sum|a_n|r^n$ 收敛，而且
+\[
+\sum_{n=0}^{\infty}|\Ree a_n|r^n
+\le\sum_{n=0}^{\infty}|a_n|r^n<\infty.
+\]
+因此 $\sum(\Ree a_n)z^n$ 在每个 $|z|<R$ 内都绝对收敛，其收敛半径 $R_1\ge R$。
+
+\problem{7}
+\textbf{题目}\quad 为什么 $1/(1+x^2)$ 对每个实数 $x$ 都有意义，而展开式 $1-x^2+x^4-\cdots$ 只在 $|x|<1$ 成立？
+\idea Taylor 级数的半径由复平面中的最近奇点决定，而不只由实轴上的定义域决定。
+\answer 作为复函数，$f(z)=1/(1+z^2)$ 在 $z=\pm\ii$ 有奇点，它们到展开中心 $0$ 的距离均为 $1$。故在 $0$ 点的 Taylor 级数半径为 $1$：
+\[
+\frac1{1+z^2}=\sum_{n=0}^{\infty}(-1)^nz^{2n},\qquad |z|<1.
+\]
+令 $z=x\in\mathbb R$，便只在 $|x|<1$ 得到题中等式。函数在更远的实点有定义，并不意味着以 $0$ 为中心的这一组 Taylor 级数也在那里收敛。
+
+\problem{8}
+\textbf{题目}\quad 把下列函数展开成 $z$ 的幂级数并指出收敛半径：
+\[
+\frac1{1+z^3},\quad \frac1{(1+z^2)^2},\quad \cos z^2,\quad
+\sinh z,\quad \ee^{z^2}\sin z^2,\quad \sin\frac1{1-z}.
+\]
+\idea 优先套用几何级数、指数和三角函数的标准展开。第 (6) 小题先写成 $\sin(1+z/(1-z))$，既容易求低次项，也便于写出一般系数。
+\answer
+\begin{enumerate}
+\item
+\[
+\frac1{1+z^3}=\sum_{n=0}^{\infty}(-1)^nz^{3n}
+=1-z^3+z^6-z^9+\cdots,
+\qquad R=1.
+\]
+\item 对几何级数求导可得
+\[
+\frac1{(1+z^2)^2}=\sum_{n=0}^{\infty}(-1)^n(n+1)z^{2n}
+=1-2z^2+3z^4-4z^6+\cdots,
+\qquad R=1.
+\]
+\item
+\[
+\cos z^2=\sum_{n=0}^{\infty}\frac{(-1)^n z^{4n}}{(2n)!}
+=1-\frac{z^4}{2!}+\frac{z^8}{4!}-\cdots,
+\qquad R=\infty.
+\]
+\item
+\[
+\sinh z=\sum_{n=0}^{\infty}\frac{z^{2n+1}}{(2n+1)!}
+=z+\frac{z^3}{3!}+\frac{z^5}{5!}+\cdots,
+\qquad R=\infty.
+\]
+\item 令 $t=z^2$。
+
+\textbf{方法一：指数形式。}由 $\sin t=(\ee^{\ii t}-\ee^{-\ii t})/(2\ii)$，
+\begin{align*}
+\ee^{z^2}\sin z^2
+&=\frac1{2\ii}\left(\ee^{(1+\ii)t}-\ee^{(1-\ii)t}\right)\\
+&=\frac1{2\ii}\sum_{n=0}^{\infty}
+\frac{(1+\ii)^n-(1-\ii)^n}{n!}z^{2n}.
+\end{align*}
+再利用
+\[
+1+\ii=\sqrt2\,\ee^{\ii\pi/4},\qquad
+1-\ii=\sqrt2\,\ee^{-\ii\pi/4},
+\]
+可把系数化成实数形式：
+\[
+\ee^{z^2}\sin z^2
+=\sum_{n=0}^{\infty}
+\frac{2^{n/2}\sin(n\pi/4)}{n!}z^{2n}.
+\]
+依次代入 $n=0,1,2,3,\ldots$，得到
+\[
+\ee^{z^2}\sin z^2
+=z^2+z^4+\frac13z^6+0\cdot z^8-\frac1{30}z^{10}+\cdots.
+\]
+
+\textbf{方法二：Cauchy 乘积。}也可以直接相乘
+\[
+\ee^t=\sum_{p=0}^{\infty}\frac{t^p}{p!},\qquad
+\sin t=\sum_{q=0}^{\infty}\frac{(-1)^qt^{2q+1}}{(2q+1)!}.
+\]
+于是 $t^n$（$n\ge1$）的系数为
+\[
+\sum_{q=0}^{\lfloor(n-1)/2\rfloor}
+\frac{(-1)^q}{(n-2q-1)!(2q+1)!}.
+\]
+两个因子都是整函数，故收敛半径 $R=\infty$。
+
+\item 令
+\[
+w=\frac{z}{1-z}=z+z^2+z^3+\cdots,\qquad |z|<1.
+\]
+
+\textbf{方法一：分别展开正弦与余弦。}由
+\[
+\sin\frac1{1-z}=\sin(1+w)=\sin1\cos w+\cos1\sin w
+\]
+出发。为了求通项，先注意对任意整数 $m\ge1$，
+\begin{align*}
+w^m
+&=\frac{z^m}{(1-z)^m}
+=z^m\sum_{r=0}^{\infty}\binom{m+r-1}{m-1}z^r\\
+&=\sum_{n=m}^{\infty}\binom{n-1}{m-1}z^n.
+\end{align*}
+写成
+\[
+\sin w=\sum_{n=0}^{\infty}x_nz^n,\qquad
+\cos w=\sum_{n=0}^{\infty}y_nz^n,
+\]
+则
+\[
+x_0=0,\qquad
+x_n=\sum_{j=0}^{\lfloor(n-1)/2\rfloor}
+\frac{(-1)^j}{(2j+1)!}\binom{n-1}{2j}\quad(n\ge1),
+\]
+以及
+\[
+y_0=1,\qquad
+y_n=\sum_{j=1}^{\lfloor n/2\rfloor}
+\frac{(-1)^j}{(2j)!}\binom{n-1}{2j-1}\quad(n\ge1).
+\]
+因此，若
+\[
+\sin\frac1{1-z}=\sum_{n=0}^{\infty}c_nz^n,
+\]
+便有
+\[
+c_n=x_n\cos1+y_n\sin1.
+\]
+
+\textbf{方法二：直接复合 Taylor 级数。}在 $w=0$ 附近，
+\[
+\sin(1+w)=\sum_{k=0}^{\infty}\frac{\sin^{(k)}(1)}{k!}w^k.
+\]
+利用上面 $[z^n]w^k=\binom{n-1}{k-1}$（$1\le k\le n$），可得
+\[
+c_0=\sin1,\qquad
+c_n=\sum_{k=1}^n\binom{n-1}{k-1}
+\frac{\sin^{(k)}(1)}{k!}\quad(n\ge1).
+\]
+把奇数阶与偶数阶导数分开，正好还原为方法一的
+$x_n\cos1+y_n\sin1$。前几项为
+\[
+\sin\frac1{1-z}
+=\sin1+(\cos1)z+\left(\cos1-\frac12\sin1\right)z^2
++\left(\frac56\cos1-\sin1\right)z^3+O(z^4).
+\]
+最近奇点为 $z=1$，故 $R=1$。
+\end{enumerate}
+
+\problem{9}
+\textbf{题目}\quad 求下列函数在指定点的 Taylor 展开式，并指出收敛半径：
+\begin{enumerate}
+\item $\dfrac{z-1}{z+1}$，$z_0=1$；
+\item $\dfrac z{(z+1)(z+2)}$，$z_0=2$；
+\item $1/z^2$，$z_0=-1$；
+\item $1/(4-3z)$，$z_0=1+\ii$；
+\item $\displaystyle\int_0^z\ee^{\xi^2}\dd\xi$，$z_0=0$；
+\item $\sin(2z-z^2)$，$z_0=1$；
+\item $\ee^{z\ln(1+z)}$，$z_0=0$；
+\item $[\ln(1+z)]^2$，$z_0=0$；
+\item $\ln z$，$z_0=\ii$；
+\item $\ee^{1/(1-z)}$，$z_0=0$。
+\end{enumerate}
+\idea 统一令 $w=z-z_0$。有理函数拆成几何级数；复合函数先把内层写到所需次数，再代入外层标准级数。
+\answer
+\begin{enumerate}
+\item 令 $w=z-1$，则
+\[
+\frac{z-1}{z+1}=\frac{w}{2+w}
+=\sum_{n=1}^{\infty}\frac{(-1)^{n-1}}{2^n}w^n
+=\frac w2-\frac{w^2}4+\frac{w^3}8-\cdots,
+\qquad R=2.
+\]
+\item 令 $w=z-2$。由
+\[
+\frac z{(z+1)(z+2)}=-\frac1{z+1}+\frac2{z+2}
+\]
+得
+\[
+\sum_{n=0}^{\infty}(-1)^n
+\left(\frac1{2\cdot4^n}-\frac1{3^{n+1}}\right)w^n
+=\frac16-\frac{w}{72}-\frac{5w^2}{864}+\frac{47w^3}{10368}+\cdots,
+\qquad R=3.
+\]
+\item 令 $w=z+1$，则
+\[
+\frac1{z^2}=\frac1{(1-w)^2}
+=\sum_{n=0}^{\infty}(n+1)w^n
+=1+2w+3w^2+4w^3+\cdots,
+\qquad R=1.
+\]
+\item 令 $w=z-(1+\ii)$，则
+\[
+\frac1{4-3z}
+=\sum_{n=0}^{\infty}\frac{3^n}{(1-3\ii)^{n+1}}w^n
+=\frac1{1-3\ii}+\frac{3w}{(1-3\ii)^2}
++\frac{9w^2}{(1-3\ii)^3}+\frac{27w^3}{(1-3\ii)^4}+\cdots,
+\]
+且 $R=|1-3\ii|/3=\sqrt{10}/3$。
+\item 逐项积分 $\ee^{\xi^2}=\sum\xi^{2n}/n!$：
+\[
+f(z)=\sum_{n=0}^{\infty}\frac{z^{2n+1}}{(2n+1)n!}
+=z+\frac{z^3}{3}+\frac{z^5}{10}+\frac{z^7}{42}+\cdots,
+\qquad R=\infty.
+\]
+\item 令 $w=z-1$，则 $2z-z^2=1-w^2$，所以
+\[
+\sin(2z-z^2)=\sum_{n=0}^{\infty}\frac{\sin(1-n\pi/2)}{n!}w^{2n}
+=\sin1-(\cos1)w^2-\frac{\sin1}{2}w^4+\frac{\cos1}{6}w^6+\cdots,
+\quad R=\infty.
+\]
+\item 在 $|z|<1$ 内取 $\ln(1+z)$ 的标准分支。由
+\[
+z\ln(1+z)=z^2-\frac12z^3+\frac13z^4+O(z^5)
+\]
+得
+\[
+\ee^{z\ln(1+z)}=1+z^2-\frac12z^3+\frac56z^4+O(z^5),
+\qquad R=1.
+\]
+从 Taylor 公式本身也可以把通项记为
+\[
+\ee^{z\ln(1+z)}
+=\sum_{n=0}^{\infty}
+\frac1{n!}\left.
+\frac{\dd^n}{\dd z^n}\ee^{z\ln(1+z)}
+\right|_{z=0}z^n.
+\]
+
+\item \textbf{方法一：先平方再作 Cauchy 乘积。}由
+\[
+\ln(1+z)=z\sum_{m=0}^{\infty}\frac{(-1)^m}{m+1}z^m,
+\]
+可得
+\[
+[\ln(1+z)]^2
+=z^2\left(\sum_{m=0}^{\infty}
+\frac{(-1)^m}{m+1}z^m\right)^2.
+\]
+若写成 $[\ln(1+z)]^2=\sum_{n=2}^{\infty}a_nz^n$，则
+\begin{align*}
+a_n
+&=\sum_{j=1}^{n-1}
+\frac{(-1)^{j-1}}j\frac{(-1)^{n-j-1}}{n-j}\\
+&=(-1)^n\sum_{j=1}^{n-1}\frac1{j(n-j)}.
+\end{align*}
+
+\textbf{方法二：把卷积和化简。}利用
+\[
+\frac1{j(n-j)}=\frac1n\left(\frac1j+\frac1{n-j}\right),
+\]
+得到
+\[
+[\ln(1+z)]^2
+=\sum_{n=2}^{\infty}(-1)^n\frac{2H_{n-1}}n z^n
+=z^2-z^3+\frac{11}{12}z^4-\frac56z^5+\cdots,
+\qquad R=1,
+\]
+其中 $H_m=1+1/2+\cdots+1/m$。
+
+\item 令 $w=z-\ii$，并在 $z=\ii$ 附近选取满足
+$\ln\ii=\ii\pi/2$ 的对数分支。因为
+\[
+z=\ii+w=\ii\left(1+\frac w\ii\right),
+\]
+所以当 $|w|<1$ 时，
+\[
+\begin{aligned}
+\ln z
+&=\ln\ii+\ln\left(1+\frac w\ii\right)\\
+&=\frac{\pi\ii}{2}
++\sum_{n=1}^{\infty}\frac{(-1)^{n-1}}n
+\left(\frac w\ii\right)^n\\
+&=\frac{\pi\ii}{2}
++\sum_{n=1}^{\infty}\frac{\ii^{,n-2}}n(z-\ii)^n\\
+&=\frac{\pi\ii}{2}-\ii(z-\ii)
++\frac12(z-\ii)^2+\frac{\ii}{3}(z-\ii)^3
+-\frac14(z-\ii)^4+\cdots.
+\end{aligned}
+\]
+最近的障碍点是 $z=0$，它到 $\ii$ 的距离为 $1$，故 $R=1$。
+
+\item \textbf{方法一：直接使用复合级数。}在 $|z|<1$ 内，
+\[
+\ee^{1/(1-z)}
+=\sum_{m=0}^{\infty}\frac1{m!}
+\left(\sum_{j=0}^{\infty}z^j\right)^m.
+\]
+由
+\[
+\left(\sum_{j=0}^{\infty}z^j\right)^m
+=(1-z)^{-m}
+=\sum_{n=0}^{\infty}\binom{n+m-1}{m-1}z^n
+\quad(m\ge1),
+\]
+可知常数项为 $\ee$；当 $n\ge1$ 时，$z^n$ 的系数也可写成
+\[
+\sum_{m=1}^{\infty}\frac1{m!}
+\binom{n+m-1}{m-1}.
+\]
+
+\textbf{方法二：先提出常数因子。}因为
+\[
+\frac1{1-z}=1+\frac z{1-z},
+\]
+所以
+\[
+\ee^{1/(1-z)}
+=\ee\exp\left(\frac z{1-z}\right).
+\]
+又有
+\[
+\left(\frac z{1-z}\right)^k
+=\sum_{n=k}^{\infty}\binom{n-1}{k-1}z^n,
+\]
+故当 $n\ge1$ 时，$z^n$ 的系数为有限和
+\[
+\ee\sum_{k=1}^n\binom{n-1}{k-1}\frac1{k!}.
+\]
+因此
+\[
+\ee^{1/(1-z)}
+=\ee\left(1+z+\frac32z^2+\frac{13}{6}z^3+O(z^4)\right),
+\qquad R=1.
+\]
+\end{enumerate}
+
+\problem{10}
+\textbf{题目}\quad 把下列函数在指定圆环域内展开成 Laurent 级数：
+\begin{enumerate}
+\item $\dfrac1{(z^2+1)(z-2)}$，$1<|z|<2$；
+\item $\dfrac1{z(1-z)^2}$，$0<|z|<1$ 与 $0<|z-1|<1$；
+\item $\dfrac1{(z-1)(z-2)}$，$0<|z-1|<1$ 与 $|z-2|>1$；
+\item $\ee^{1/(1-z)}$，$|z|>1$；
+\item $\sin\dfrac1{1-z}$，$0<|z-1|<\infty$；
+\item $\dfrac1{z(\ii-z)}$，$0<|z-\ii|<1$；
+\item $\dfrac{z^2-2z+5}{(z-2)(z^2+1)}$，$1<|z|<2$ 与 $|z|>2$；
+\item $\dfrac1{z(z+2)^3}$，$0<|z|<1$；
+\item $\dfrac{\ee^z}{z(z^2+1)}$，$0<|z|<1$。
+\end{enumerate}
+\idea 先做部分分式，再根据圆环决定使用正幂几何级数还是负幂几何级数。每一个等号都要连同适用的圆环一起看。
+\answer
+\begin{enumerate}
+\item 利用
+\[
+\frac1{(z^2+1)(z-2)}=-\frac15\frac{z+2}{z^2+1}+\frac15\frac1{z-2},
+\]
+在 $1<|z|<2$ 内得到
+\[
+-\frac15\sum_{n=0}^{\infty}(-1)^n
+\left(z^{-2n-1}+2z^{-2n-2}\right)
+-\frac1{10}\sum_{n=0}^{\infty}\left(\frac z2\right)^n.
+\]
+前几项为
+\[
+-\frac1{5z}-\frac2{5z^2}+\frac1{5z^3}+\frac2{5z^4}+\cdots
+-\frac1{10}-\frac z{20}-\frac{z^2}{40}-\frac{z^3}{80}-\cdots.
+\]
+\item 在 $0<|z|<1$ 内，
+\[
+\frac1{z(1-z)^2}=\frac1z\sum_{n=0}^{\infty}(n+1)z^n
+=\frac1z+2+3z+4z^2+5z^3+\cdots.
+\]
+令 $w=z-1$，在 $0<|w|<1$ 内，
+\[
+\frac1{z(1-z)^2}=\frac1{w^2(1+w)}
+=\frac1{w^2}-\frac1w+1-w+w^2-w^3+\cdots.
+\]
+\item 令 $w=z-1$。在 $0<|w|<1$ 内，
+\[
+\frac1{(z-1)(z-2)}=-\frac1{w(1-w)}
+=-\frac1w-1-w-w^2-w^3-\cdots.
+\]
+令 $v=z-2$。在 $|v|>1$ 内，
+\[
+\frac1{(z-1)(z-2)}=\frac1{v(v+1)}
+=\frac1{v^2}-\frac1{v^3}+\frac1{v^4}-\frac1{v^5}+\cdots.
+\]
+\item 当 $|z|>1$ 时，令 $t=1/z$，有
+\[
+\ee^{1/(1-z)}=\exp\left(-\frac{t}{1-t}\right)
+=1-t-\frac12t^2-\frac16t^3+O(t^4).
+\]
+即
+\[
+\ee^{1/(1-z)}=1-\frac1z-\frac1{2z^2}-\frac1{6z^3}+O(z^{-4}).
+\]
+若写成 $1+\sum_{n\ge1}a_nz^{-n}$，则
+\[
+a_n=\sum_{k=1}^n\frac{(-1)^k}{k!}\binom{n-1}{k-1}.
+\]
+\item 令 $w=z-1$。在 $0<|w|<\infty$ 内，
+\[
+\sin\frac1{1-z}=-\sin\frac1w
+=-\frac1w+\frac1{3!w^3}-\frac1{5!w^5}+\frac1{7!w^7}-\cdots.
+\]
+\item 令 $w=z-\ii$。由
+\[
+\frac1{z(\ii-z)}=\frac{\ii}{w}-\frac{\ii}{\ii+w}
+\]
+知在 $0<|w|<1$ 内
+\[
+\frac1{z(\ii-z)}=\frac{\ii}{w}-\sum_{n=0}^{\infty}\ii^n w^n
+=\frac{\ii}{w}-1-\ii w+w^2+\ii w^3-\cdots.
+\]
+\item 先分解
+\[
+\frac{z^2-2z+5}{(z-2)(z^2+1)}=\frac1{z-2}-\frac2{z^2+1}.
+\]
+在 $1<|z|<2$ 内，
+\[
+-\frac12\sum_{n=0}^{\infty}\left(\frac z2\right)^n
+-2\sum_{n=0}^{\infty}(-1)^nz^{-2n-2},
+\]
+即
+\[
+-\frac12-\frac z4-\frac{z^2}8-\frac{z^3}{16}-\cdots
+-\frac2{z^2}+\frac2{z^4}-\frac2{z^6}+\cdots.
+\]
+在 $|z|>2$ 内，
+\[
+\sum_{n=0}^{\infty}2^nz^{-n-1}
+-2\sum_{n=0}^{\infty}(-1)^nz^{-2n-2}.
+\]
+合并前几项为 $z^{-1}+4z^{-3}+10z^{-4}+16z^{-5}+30z^{-6}+\cdots$；其中 $z^{-2}$ 项恰好抵消。
+\item 在 $0<|z|<1$ 内，
+\[
+\frac1{z(z+2)^3}
+=\frac1{8z}\sum_{n=0}^{\infty}(-1)^n\binom{n+2}{2}\left(\frac z2\right)^n
+=\frac1{8z}-\frac3{16}+\frac3{16}z-\frac5{32}z^2+\frac{15}{128}z^3+\cdots.
+\]
+\item 在 $0<|z|<1$ 内，分别展开两个因子：
+\[
+\ee^z=\sum_{m=0}^{\infty}\frac{z^m}{m!},
+\qquad
+\frac1{1+z^2}=\sum_{k=0}^{\infty}(-1)^kz^{2k}.
+\]
+因此
+\[
+\frac{\ee^z}{z(1+z^2)}
+=\frac1z
+\sum_{n=0}^{\infty}a_nz^n,
+\]
+其中 Cauchy 乘积给出
+\[
+a_n=\sum_{k=0}^{\lfloor(n+1)/2\rfloor}
+\frac{(-1)^k}{(n+1-2k)!},
+\qquad n=0,1,2,\ldots.
+\]
+这个式子按阶乘次数从大到小排列。若希望按 $0!$ 或 $1!$ 起依次向上排列，令
+\[
+m=\left\lfloor\frac{n+1}{2}\right\rfloor,
+\]
+再把上式中的求和指标换成 $j=m-k$，便得到等价的正序写法
+\[
+a_n=\sum_{k=0}^{m}
+\frac{(-1)^{m+k}}{(2k+n+1-2m)!},
+\qquad m=\left\lfloor\frac{n+1}{2}\right\rfloor.
+\]
+事实上，$n+1-2(m-k)=2k+n+1-2m$，而
+$(-1)^{m-k}=(-1)^{m+k}$，所以这两个通项只是求和次序相反。
+例如
+\begin{align*}
+a_0&=1,\\
+a_1&=\frac1{2!}-1=-\frac12,\\
+a_2&=\frac1{3!}-1=-\frac56,\\
+a_3&=\frac1{4!}-\frac1{2!}+1=\frac{13}{24}.
+\end{align*}
+故展开式的开头几项为
+\[
+\frac{\ee^z}{z(1+z^2)}
+=\frac1z+1-\frac12z-\frac56z^2
++\frac{13}{24}z^3+\frac{101}{120}z^4+\cdots,
+\qquad 0<|z|<1.
+\]
+\end{enumerate}
+
+\laterproblems
+\end{document}
