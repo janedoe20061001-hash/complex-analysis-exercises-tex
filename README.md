@@ -4,6 +4,12 @@
 
 解答以原有演算过程为基础，在不省略必要步骤的前提下补充定理适用条件、计算依据、易错事项与多种解法，并对全书的符号、图形、题号和排版格式进行统一。
 
+## 复平面变形实验室
+
+[打开网页版](https://janedoe20061001-hash.github.io/complex-analysis-exercises-tex/) · [直达机翼演示](https://janedoe20061001-hash.github.io/complex-analysis-exercises-tex/#airfoil) · [下载离线版](docs/complex-grid-lab.zip)
+
+九种复函数的交互演示。拖动 A、B，观察它们的像。转动一对垂直箭头，比较映射前后的转角和伸缩倍数。还可以播放偏心圆变成机翼截线的过程。离线版解压后用浏览器打开 `index.html`。
+
 ## 历年真题与期末预测题
 
 - [真题与预测题 PDF](真题解析/真题与预测题.pdf)

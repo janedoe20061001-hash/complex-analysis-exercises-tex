@@ -1,0 +1,1295 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>复平面变形实验室</title>
+  <meta name="description" content="拖动点和箭头，观察九种复函数如何弯曲网格、旋转和伸缩。还有偏心圆变成机翼的动画。">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:title" content="复平面变形实验室">
+  <meta property="og:description" content="拖动点和箭头，看复函数怎样改变平面。试试把一个圆变成机翼。">
+  <meta property="og:url" content="https://janedoe20061001-hash.github.io/complex-analysis-exercises-tex/">
+  <meta property="og:image" content="https://janedoe20061001-hash.github.io/complex-analysis-exercises-tex/share.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="偏心圆经过儒可夫斯基变换后成为带尖尾的机翼截线">
+  <meta name="twitter:card" content="summary_large_image">
+  <style>
+    :root {
+      --ink: #12243a;
+      --muted: #4b5d71;
+      --blue: #0756a0;
+      --border: #d7e1ec;
+      --paper: #f3f7fb;
+      --navy: #0c2037;
+      --a: #76eed6;
+      --b: #ffcd79;
+      font-family: "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    :focus-visible { outline: 3px solid #4287d0; outline-offset: 3px; }
+    .wrap { width: min(1200px, calc(100% - 64px)); margin-inline: auto; }
+    .course-bar {
+      border-bottom: 1px solid var(--border);
+      background: #fff;
+    }
+    .course-bar .wrap {
+      min-height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      font-size: 14px;
+    }
+    .course-name { display: flex; align-items: center; gap: 11px; font-weight: 700; }
+    .course-name::before { content: ""; width: 4px; height: 19px; background: #c89c39; border-radius: 2px; }
+    .top-links { display: flex; align-items: center; flex-wrap: wrap; gap: 7px 17px; }
+    .course-bar a { color: var(--blue); text-decoration: none; white-space: nowrap; }
+    .course-bar a:hover { text-decoration: underline; }
+    main { padding-block: 28px 34px; }
+    h1 { margin: 0; font-size: clamp(30px, 4vw, 46px); letter-spacing: -.035em; line-height: 1.15; }
+    .title-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; margin-bottom: 20px; }
+    .intro { margin: 8px 0 0; color: var(--muted); font-size: 15px; line-height: 1.65; }
+    #airfoil-demo { margin-top: 1px; }
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px 26px;
+      padding: 9px;
+      margin-bottom: 14px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+    }
+    .choices, .playback, .point-controls, .presets { display: flex; align-items: center; gap: 8px; }
+    .choices { display: grid; grid-template-columns: repeat(9, auto); gap: 3px; padding: 3px; background: #ebf1f7; border-radius: 9px; }
+    .choice, .play, .outline, .point-button {
+      min-height: 38px;
+      border: 1px solid transparent;
+      border-radius: 7px;
+      padding: 4px 12px;
+    }
+    .choice { background: transparent; color: var(--muted); padding-inline: 8px; min-width: 52px; white-space: nowrap; }
+    .choice:hover, .point-button:hover { background: #e1edf8; }
+    .choice[aria-pressed="true"], .point-button[aria-pressed="true"] {
+      background: #fff;
+      color: var(--blue);
+      border-color: #cbd9e8;
+      box-shadow: 0 1px 3px #12243a14;
+    }
+    .formula { font-family: Cambria, "Times New Roman", serif; font-style: italic; }
+    .choice .formula, .plot-head .formula { font-size: 21px; }
+    .choice .name { font-size: 14px; }
+    .choice sup { font-size: .68em; }
+    .playback { flex: 1 1 310px; max-width: 495px; min-width: 0; gap: 12px; }
+    .play { background: var(--blue); color: #fff; font-weight: 700; font-size: 14px; min-width: 94px; }
+    .play:hover { background: #074981; }
+    .slider { min-width: 0; flex: 1; display: flex; align-items: center; gap: 8px; }
+    .slider label, .slider output { font-size: 13px; color: var(--muted); white-space: nowrap; }
+    .slider input { flex: 1; min-width: 0; margin: 0; height: 32px; accent-color: var(--blue); }
+    .slider output { min-width: 4ch; text-align: right; font-variant-numeric: tabular-nums; }
+    .profile-controls { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 12px; }
+    .profile-controls[hidden] { display: none; }
+    .profile-controls [aria-pressed="true"] { background: #e1edf8; border-color: #98b7d5; font-weight: 700; }
+    .plots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .plot { min-width: 0; margin: 0; overflow: hidden; border-radius: 14px; background: var(--navy); color: #eff7ff; }
+    .plot-head, .plot-values { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding-inline: 18px; }
+    .plot-head { padding-top: 13px; min-height: 48px; }
+    .plot-head strong { font-size: 16px; }
+    .plot-head .formula { color: #d9eaff; white-space: nowrap; }
+    canvas { display: block; width: 100%; height: clamp(260px, 29vw, 385px); }
+    #source { touch-action: none; cursor: crosshair; }
+    .plot-values {
+      border-top: 1px solid #263c55;
+      padding-block: 12px;
+      min-height: 48px;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+      column-gap: 22px;
+      font: 14px/1.5 Consolas, "Courier New", monospace;
+      font-variant-numeric: tabular-nums;
+    }
+    .mark-a { color: var(--a); }
+    .mark-b { color: var(--b); }
+    .workbench {
+      margin-top: 14px;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      background: #fff;
+    }
+    .workbench-row { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px 18px; padding: 12px 14px; }
+    .point-controls, .presets { flex-wrap: wrap; }
+    .point-controls { margin: 0; }
+    .point-controls label { font-size: 13px; color: var(--muted); }
+    .point-controls label { display: flex; align-items: center; gap: 5px; }
+    .point-pick { display: flex; gap: 3px; background: #ebf1f7; border-radius: 8px; padding: 3px; }
+    .point-button { background: transparent; color: var(--ink); font-weight: 700; min-width: 38px; min-height: 32px; padding: 3px 9px; }
+    .coord { width: 66px; height: 34px; border: 1px solid #bfcede; border-radius: 6px; padding: 4px 6px; color: var(--ink); }
+    .outline { background: #fff; border-color: #c8d7e6; color: var(--blue); font-size: 13px; }
+    .outline:hover { background: #edf5fd; }
+    .outline:disabled { color: #596a7b; background: #f0f3f7; cursor: default; }
+    .zoom { display: flex; align-items: center; gap: 5px; color: var(--muted); font-size: 13px; }
+    .zoom select { min-height: 38px; padding-inline: 7px; border: 1px solid #c8d7e6; border-radius: 7px; background: #fff; color: var(--blue); font: inherit; }
+    .direction-row { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 20px; padding: 0 14px 12px; }
+    .direction-row .slider { flex: 1 1 270px; max-width: 415px; }
+    .direction-row p { flex: 1 1 410px; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.55; }
+    .result {
+      display: grid;
+      grid-template-columns: .9fr 1fr 1fr;
+      gap: 10px 24px;
+      border-top: 1px solid var(--border);
+      padding: 12px 16px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .result p { margin: 0; }
+    .result p span { color: var(--muted); }
+    .map-note { margin: 10px 2px 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
+    .map-note a { color: var(--blue); margin-inline-start: .5em; }
+    details { margin-top: 14px; color: var(--muted); font-size: 14px; line-height: 1.7; }
+    summary { width: fit-content; cursor: pointer; font-weight: 700; color: var(--blue); }
+    details p { margin: 8px 0 0; max-width: 75ch; }
+    details ul { padding-inline-start: 1.5em; }
+    details a { color: var(--blue); }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+    @media (max-width: 760px) {
+      .wrap { width: calc(100% - 30px); }
+      main { padding-top: 22px; }
+      .playback { max-width: none; }
+    }
+    @media (max-width: 620px) {
+      .choices { width: 100%; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .choice { min-width: 0; padding-inline: 3px; }
+      .choice .name { font-size: 13px; }
+      .plots, .result { grid-template-columns: 1fr; }
+      canvas { height: clamp(250px, 68vw, 350px); }
+      .course-bar .wrap { font-size: 12px; }
+      .plot-head, .plot-values { padding-inline: 12px; }
+      .plot-head { flex-wrap: wrap; }
+    }
+    @media (pointer: coarse) {
+      .choice, .play, .outline, .point-button, .coord, .zoom select { min-height: 44px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="course-bar">
+    <div class="wrap">
+      <span class="course-name">复变函数交互实验</span>
+      <nav class="top-links" aria-label="项目链接">
+        <a id="offline-download" href="complex-grid-lab.zip" download hidden>下载离线版</a>
+        <a href="https://github.com/janedoe20061001-hash/complex-analysis-exercises-tex/blob/main/docs/index.html" target="_blank" rel="noopener noreferrer">GitHub 源码</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="title-row">
+      <div>
+        <h1>复平面变形实验室</h1>
+        <p class="intro">拖动点和箭头，观察九种复函数怎样改变网格、角度和长度。</p>
+      </div>
+      <button id="airfoil-demo" class="outline" type="button">看偏心圆变成机翼 <span aria-hidden="true">→</span></button>
+    </div>
+    <section class="controls" aria-label="映射与动画">
+      <div class="choices" role="group" aria-label="选择复函数">
+        <button class="choice" data-map="square" type="button" aria-label="z 的平方" aria-pressed="true"><span class="formula">z<sup>2</sup></span></button>
+        <button class="choice" data-map="cube" type="button" aria-label="z 的立方" aria-pressed="false"><span class="formula">z<sup>3</sup></span></button>
+        <button class="choice" data-map="exp" type="button" aria-label="e 的 z 次方" aria-pressed="false"><span class="formula">e<sup>z</sup></span></button>
+        <button class="choice" data-map="cos" type="button" aria-label="余弦 z" aria-pressed="false"><span class="formula">cos z</span></button>
+        <button class="choice" data-map="inverse" type="button" aria-label="z 的倒数" aria-pressed="false"><span class="formula">1/z</span></button>
+        <button class="choice" data-map="joukowski" type="button" aria-label="儒可夫斯基变换 z 加 1 除以 z" aria-pressed="false"><span class="formula">z + 1/z</span></button>
+        <button class="choice" data-map="cayley" type="button" aria-label="莫比乌斯变换 (z−i)/(z+i)" aria-pressed="false"><span class="name">莫比乌斯</span></button>
+        <button class="choice" data-map="log" type="button" aria-label="复对数主支" aria-pressed="false"><span class="formula">Log z</span></button>
+        <button class="choice" data-map="sqrt" type="button" aria-label="复平方根主支" aria-pressed="false"><span class="formula">√z</span></button>
+      </div>
+      <div class="playback">
+        <button id="play" class="play" type="button">播放变形</button>
+        <div class="slider">
+          <label for="progress">变形进度</label>
+          <input id="progress" type="range" min="0" max="100" value="100">
+          <output id="percent" for="progress" aria-hidden="true">100%</output>
+        </div>
+      </div>
+    </section>
+
+    <div class="profile-controls" id="joukowski-profiles" role="group" aria-label="儒可夫斯基变换的参考曲线" hidden>
+      <button class="outline" type="button" data-joukowski-profile="circle" aria-pressed="true">单位圆 → 线段</button>
+      <button class="outline" type="button" data-joukowski-profile="airfoil" aria-pressed="false">偏心圆 → 机翼</button>
+    </div>
+
+    <div class="plots">
+      <figure class="plot">
+        <figcaption class="plot-head"><strong>原网格</strong><span class="formula">z 平面</span></figcaption>
+        <canvas id="source" role="img" aria-label="原复平面网格。可拖动 A、B，点击空白处可让选中的点移过去。拖动选中点的蓝色箭头末端可旋转两支箭头。"></canvas>
+        <div class="plot-values">
+          <span><b class="mark-a">● A</b> <span id="source-a"></span></span>
+          <span><b class="mark-b">◆ B</b> <span id="source-b"></span></span>
+        </div>
+      </figure>
+      <figure class="plot">
+        <figcaption class="plot-head"><strong id="target-title">映射后的网格</strong><span id="equation" class="formula">w = z<sup>2</sup></span></figcaption>
+        <canvas id="target" role="img" aria-label="变形后的复平面网格，显示 A 和 B 的像及各自一对箭头的旋转与伸缩。"></canvas>
+        <div class="plot-values">
+          <span><b class="mark-a">● A 的像</b> <span id="target-a"></span></span>
+          <span><b class="mark-b">◆ B 的像</b> <span id="target-b"></span></span>
+        </div>
+      </figure>
+    </div>
+
+    <section class="workbench" aria-label="选点与观察结果">
+      <div class="workbench-row">
+        <form class="point-controls" id="coordinates">
+          <div class="point-pick" role="group" aria-label="选择要移动的点">
+            <button class="point-button" data-point="a" aria-label="移动 A 点" aria-pressed="true" type="button">● A</button>
+            <button class="point-button" data-point="b" aria-label="移动 B 点" aria-pressed="false" type="button">◆ B</button>
+          </div>
+          <label>实部<input id="coord-x" class="coord" type="number" step="any" required></label>
+          <label>虚部<input id="coord-y" class="coord" type="number" step="any" required></label>
+          <button class="outline" type="submit">定位</button>
+        </form>
+        <div class="presets">
+          <button id="pair" class="outline" type="button">查看不同点同像</button>
+          <button id="critical" class="outline" type="button">查看临界点</button>
+          <button id="pole" class="outline" type="button" hidden>查看极点</button>
+          <label class="zoom">像平面缩放
+            <select id="zoom">
+              <option value=".5">½×</option>
+              <option value="1" selected>1×</option>
+              <option value="2">2×</option>
+              <option value="4">4×</option>
+            </select>
+          </label>
+        </div>
+      </div>
+      <div class="direction-row">
+        <div class="slider">
+          <label id="heading-label" for="heading">A 点箭头方向</label>
+          <input id="heading" type="range" min="0" max="359" step="1" value="0">
+          <output id="heading-value" for="heading" aria-hidden="true">0°</output>
+        </div>
+        <p>拖动 A、B 移点。点击左图空白处，选中点会平滑移过去。拖动选中点蓝色箭头的末端可旋转整组。</p>
+      </div>
+      <div class="result" aria-label="映射读数">
+        <p><strong>最终两点的像</strong>　<span id="pair-result"></span></p>
+        <p><strong>A 当前的旋转与伸缩</strong>　<span id="angle-result"></span></p>
+        <p><strong>B 当前的旋转与伸缩</strong>　<span id="angle-result-b"></span></p>
+      </div>
+    </section>
+
+    <p id="map-note" class="map-note" hidden><span id="map-note-text"></span><a id="map-lesson" href="https://complex-analysis.com/content/joukowsky_airfoil.html" target="_blank" rel="noopener noreferrer" hidden>儒可夫斯基变换参考</a></p>
+
+    <details>
+      <summary>课堂提问与动画说明</summary>
+      <p id="question"></p>
+      <p>动画把每个点沿直线从 <i>z</i> 移到 <i>f</i>(<i>z</i>)，即 <i>w</i><sub>t</sub> = (1 − <i>t</i>)<i>z</i> + <i>t f</i>(<i>z</i>)。蓝色网格线来自原图横线，橙色网格线来自原图竖线。两图的箭头使用同一长度标尺，超出图框的部分会被裁切。</p>
+      <p>进度为 100% 时，局部箭头乘以同一个复数 <i>f</i>′(<i>z</i>)。当它非零时，两支箭头一起转过 arg <i>f</i>′(<i>z</i>)，长度都乘以 |<i>f</i>′(<i>z</i>)|。固定点的位置，转动原图里的箭头，观察这两个读数。</p>
+    </details>
+    <details>
+      <summary>参考动画与源代码</summary>
+      <ul>
+        <li>看整张网格怎样变形。<a href="https://www.youtube.com/watch?v=s8CSFNN_gnM" target="_blank" rel="noopener noreferrer">Jason Schattman · Twisting the Plane with Complex Numbers（YouTube）</a></li>
+        <li>看平方根的支点和单值分支。<a href="https://www.bilibili.com/video/BV1WF411X7KZ/" target="_blank" rel="noopener noreferrer">《复平面与开平方》（B 站）</a></li>
+        <li>对比直角坐标网格、分色网格和参考圆。<a href="https://3d-xplormath.org/j/docs/en/3dxm.gallery.ConformalMaps.ATG.html" target="_blank" rel="noopener noreferrer">3D-XplorMath · Conformal Maps Gallery</a></li>
+        <li>对照上半平面与单位圆盘的边界。<a href="https://complex-analysis.com/content/linear_fractional_transformations.html" target="_blank" rel="noopener noreferrer">Juan Carlos Ponce Campuzano · 分式线性变换演示</a></li>
+        <li>观察偏心圆在儒可夫斯基映射下怎样变成机翼截线。<a href="https://complex-analysis.com/content/joukowsky_airfoil.html" target="_blank" rel="noopener noreferrer">Juan Carlos Ponce Campuzano · Joukowsky Airfoil</a></li>
+        <li>查看非线性变换前如何细分网格，以及怎样保留原网格作对照。<a href="https://github.com/3b1b/manim/blob/master/example_scenes.py#L39-L62" target="_blank" rel="noopener noreferrer">3Blue1Brown · ManimGL 示例源代码</a></li>
+      </ul>
+    </details>
+  </main>
+
+  <script>
+    "use strict";
+
+    const point = (x, y) => ({ x, y });
+    const multiply = (a, b) => point(a.x * b.x - a.y * b.y, a.x * b.y + a.y * b.x);
+    const scalePoint = (z, factor) => point(z.x * factor, z.y * factor);
+    const square = (z) => multiply(z, z);
+    const inPolar = (radius, angle) => point(radius * Math.cos(angle), radius * Math.sin(angle));
+    const reciprocal = (z) => {
+      const radius = Math.hypot(z.x, z.y);
+      return point((z.x / radius) / radius, (-z.y / radius) / radius);
+    };
+    const principalRoot = (z) => inPolar(Math.sqrt(Math.hypot(z.x, z.y)), Math.atan2(z.y, z.x) / 2);
+    const exponential = (z) => {
+      return inPolar(Math.exp(z.x), z.y);
+    };
+    const cosine = (z) => point(Math.cos(z.x) * Math.cosh(z.y), -Math.sin(z.x) * Math.sinh(z.y));
+    const maps = {
+      square: {
+        formula: "z<sup>2</sup>",
+        domain: point(2.5, 2),
+        image: point(6.3, 10),
+        step: point(.5, .5),
+        apply: square,
+        derivative: (z) => scalePoint(z, 2),
+        criticalOrder: 2,
+        sample: [point(1.1, .65), point(-.65, 1.15)],
+        pair: [point(1, .75), point(-1, -.75)],
+        critical: point(0, 0),
+        question: "把 A 移到原点，再移到附近。比较箭头的长度，用 z² 判断从原点沿实轴正向和虚轴正向出发的两条射线分别映到哪里。"
+      },
+      cube: {
+        formula: "z<sup>3</sup>",
+        domain: point(1.6, 1.6),
+        image: point(8.2, 8.2),
+        step: point(.4, .4),
+        apply: (z) => multiply(square(z), z),
+        derivative: (z) => scalePoint(square(z), 3),
+        criticalOrder: 3,
+        sample: [point(.8, .3), point(-.5, .7)],
+        pair: [point(.9, 0), inPolar(.9, 2 * Math.PI / 3)],
+        critical: point(0, 0),
+        note: "在原点，一阶箭头缩成点。若改看从原点出发的射线，立方映射会把辐角乘以 3。",
+        question: "为什么原来逆时针转 90°，映过去后逆时针转 270°？如果一个点绕原点走一圈，它的像会绕几圈？"
+      },
+      exp: {
+        formula: "e<sup>z</sup>",
+        domain: point(1.5, 3.5),
+        image: point(Math.exp(1.5), Math.exp(1.5)),
+        step: point(.3, .5),
+        apply: exponential,
+        derivative: exponential,
+        sample: [point(.4, 1), point(-.6, -1.25)],
+        pair: [point(.5, -Math.PI), point(.5, Math.PI)],
+        question: "先预测虚部相差 2π 的两点会怎样，再点击“查看不同点同像”。两点的像重合时，A 点附近的直角是否还保留？"
+      },
+      cos: {
+        formula: "cos z",
+        domain: point(3.6, 1.8),
+        image: point(Math.cosh(1.8), Math.sinh(1.8)),
+        step: point(.6, .3),
+        apply: cosine,
+        derivative: (z) => point(-Math.sin(z.x) * Math.cosh(z.y), -Math.cos(z.x) * Math.sinh(z.y)),
+        criticalOrder: 2,
+        isCritical: (z) => z.y === 0 && z.x === Math.round(z.x / Math.PI) * Math.PI,
+        sample: [point(1.1, .6), point(-1.75, -.85)],
+        pair: [point(1.2, .65), point(-1.2, -.65)],
+        critical: point(Math.PI, 0),
+        question: "比较 A 位于 π 和 π 附近时的箭头长度。把 A 固定在 π 附近并旋转箭头，观察旋转与伸缩读数。"
+      },
+      inverse: {
+        formula: "1/z",
+        domain: point(2.5, 2),
+        image: point(2.5, 2.1),
+        step: point(.5, .5),
+        apply: reciprocal,
+        derivative: (z) => scalePoint(square(reciprocal(z)), -1),
+        sample: [point(.5, .45), point(1.1, -.8)],
+        pair: [point(.6, .8), point(.6, -.8)],
+        pairLabel: "看单位圆上的点",
+        injective: true,
+        pole: point(0, 0),
+        guide: "circle",
+        note: "黄色曲线标出单位圆及其像。原点是极点，像平面只显示有限窗口内的网格。",
+        question: "分别在单位圆内和圆外选点。倒数映射怎样交换内外？水平或竖直的网格线经过原点与避开原点时，像有什么区别？"
+      },
+      joukowski: {
+        formula: "z + 1/z",
+        domain: point(2.5, 2),
+        image: point(3.4, 2.55),
+        step: point(.5, .5),
+        apply: (z) => {
+          const inverse = reciprocal(z);
+          return point(z.x + inverse.x, z.y + inverse.y);
+        },
+        derivative: (z) => {
+          const inverseSquared = square(reciprocal(z));
+          return point(1 - inverseSquared.x, -inverseSquared.y);
+        },
+        criticalOrder: 2,
+        isCritical: (z) => Math.abs(z.x) === 1 && z.y === 0,
+        sample: [point(.7, .6), point(1.45, -.2)],
+        pair: [point(1.2, .6), reciprocal(point(1.2, .6))],
+        pairLabel: "看互为倒数的两点",
+        critical: point(1, 0),
+        pole: point(0, 0),
+        guide: "circle",
+        note: "黄色单位圆映成实轴线段 [−2, 2]。z = 0 是极点，z = ±1 是临界点。课件写作 w = (z + a²/z)/2，取 a = 1 后，像坐标是这里的一半。",
+        question: "播放变形，观察上、下半圆各怎样覆盖线段。再比较互为倒数的两点，能否只凭像的位置判断原像在单位圆内还是圆外？",
+        airfoil: {
+          center: point(-.16, .14),
+          image: point(2.24, 1.38),
+          note: "黄色偏心圆经过 z = 1，并把 z = −1 包在内部。拖动进度条观察机翼截线逐渐成形，z = 1 的像在 w = 2 形成尖尾。左图虚线为单位圆。",
+          question: "比较两种参考圆。单位圆经过两个临界点，偏心圆只经过一个。它们的像分别在什么位置折返或形成尖尾？"
+        }
+      },
+      cayley: {
+        formula: "(z − i)/(z + i)",
+        domain: point(4, 2.5),
+        image: point(1.9, 1.65),
+        step: point(.5, .5),
+        apply: (z) => {
+          const r = reciprocal(point(z.x, z.y + 1));
+          return point(1 + 2 * r.y, -2 * r.x);
+        },
+        derivative: (z) => multiply(point(0, 2), square(reciprocal(point(z.x, z.y + 1)))),
+        sample: [point(0, 1), point(1, 1)],
+        pair: [point(-1, 0), point(1, 0)],
+        pairLabel: "看实轴的像",
+        injective: true,
+        pole: point(0, -1),
+        guide: "real",
+        note: "黄色线跟随图中实轴线段变形，右图虚线补出完整单位圆。上半平面映到圆内，下半平面除极点外映到圆外。",
+        question: "先在实轴上选点，再把点移进上半平面或下半平面。它的像落在单位圆的哪一侧？"
+      },
+      log: {
+        formula: "Log z",
+        domain: point(2.5, 2),
+        image: point(3.7, 3.35),
+        step: point(.5, .5),
+        apply: (z) => point(Math.log(Math.hypot(z.x, z.y)), Math.atan2(z.y, z.x)),
+        derivative: reciprocal,
+        sample: [point(.65, .7), point(-1.05, -.65)],
+        pair: [point(-1, .08), point(-1, -.08)],
+        pairLabel: "看支割两侧",
+        injective: true,
+        cut: true,
+        strip: true,
+        note: "左图紫色虚线是支割（非正实轴）。右图两条紫线标出主支像的边界 Im w = ±π。",
+        question: "让 A、B 从上、下两侧靠近同一个负实数。比较像的虚部，看看它们相差多少。"
+      },
+      sqrt: {
+        formula: "√z",
+        domain: point(2.5, 2),
+        image: point(1.6, 1.6),
+        step: point(.5, .5),
+        apply: principalRoot,
+        derivative: (z) => scalePoint(reciprocal(principalRoot(z)), .5),
+        sample: [point(.65, .7), point(-1.05, -.65)],
+        pair: [point(-1.6, .08), point(-1.6, -.08)],
+        pairLabel: "看支割两侧",
+        injective: true,
+        cut: true,
+        note: "左图紫色虚线是支割（非正实轴）。此解析主支的像在右半平面，支割两侧分别对应虚轴的上、下两侧。",
+        question: "让 A、B 从两侧靠近 −1。它们的像分别趋近哪两个数？"
+      }
+    };
+
+    const byId = (id) => document.getElementById(id);
+    const source = byId("source");
+    const target = byId("target");
+    const slider = byId("progress");
+    const zoom = byId("zoom");
+    const heading = byId("heading");
+    const play = byId("play");
+    const targetTitle = byId("target-title");
+    const equation = byId("equation");
+    const coordinateInputs = [byId("coord-x"), byId("coord-y")];
+    const mapButtons = document.querySelectorAll("[data-map]");
+    const pointButtons = document.querySelectorAll("[data-point]");
+    const profileButtons = document.querySelectorAll("[data-joukowski-profile]");
+    const colors = {
+      horizontal: "#8dc6fd",
+      vertical: "#ffb68c",
+      a: "#76eed6",
+      b: "#ffcd79",
+      guide: "#ffe4a0",
+      cut: "#dcb8fa",
+      ink: "#0c2037"
+    };
+    const threshold = 1e-12;
+    const gridGap = 1e-4;
+    const duration = 2600;
+    const arrowLength = 30;
+    const headings = { a: 0, b: 0 };
+    const journeys = new Map();
+    let map;
+    let points;
+    let selected = "a";
+    let progress = 1;
+    let animation = null;
+    let travelFrame = null;
+    let gesture = null;
+    let sourceView;
+    let grid = [];
+    let guide = [];
+    let airfoilMode = false;
+    const views = new Map();
+
+    function mix(start, end, t) {
+      return point((1 - t) * start.x + t * end.x, (1 - t) * start.y + t * end.y);
+    }
+
+    function separation(a, b) {
+      return Math.hypot(a.x - b.x, a.y - b.y);
+    }
+
+    function samePoint(a, b) {
+      return a.x === b.x && a.y === b.y;
+    }
+
+    function coincides(a, b) {
+      return separation(a, b) < threshold * Math.max(1, Math.hypot(a.x, a.y), Math.hypot(b.x, b.y));
+    }
+
+    function excluded(z) {
+      if (map.pole && z.x === map.pole.x && z.y === map.pole.y) return "极点（像趋于无穷远）";
+      if (map.cut && z.x <= 0 && z.y === 0) return "在当前解析主支的定义域外";
+      return "";
+    }
+
+    function criticalAt(z) {
+      return map.isCritical ? map.isCritical(z) : map.critical && z.x === map.critical.x && z.y === map.critical.y;
+    }
+
+    function finite(z) {
+      return z !== null && Number.isFinite(z.x) && Number.isFinite(z.y);
+    }
+
+    function imageOf(z, t = 1) {
+      if (t === 0) return z;
+      if (excluded(z)) return null;
+      const image = map.apply(z);
+      return t === 1 ? image : mix(z, image, t);
+    }
+
+    function numberText(value) {
+      return String(Number(value.toFixed(3)));
+    }
+
+    function complexText(z) {
+      const real = numberText(z.x);
+      const imaginary = Number(numberText(z.y));
+      if (imaginary === 0) return real;
+      const magnitude = Math.abs(imaginary) === 1 ? "i" : Math.abs(imaginary) + "i";
+      if (real === "0") return imaginary < 0 ? "−" + magnitude : magnitude;
+      return real + (imaginary < 0 ? " − " : " + ") + magnitude;
+    }
+
+    function lineIntervals(horizontal, fixed, run) {
+      if (map.cut && horizontal && fixed === 0) return [[gridGap, run]];
+      let split = null;
+      if (map.cut && !horizontal && fixed <= 0) split = 0;
+      if (map.pole) {
+        const along = horizontal ? map.pole.x : map.pole.y;
+        const across = horizontal ? map.pole.y : map.pole.x;
+        if (fixed === across && Math.abs(along) <= run) split = along;
+      }
+      if (split === null) return [[-run, run]];
+      return [[-run, split - gridGap], [split + gridGap, run]].filter(([first, last]) => first < last);
+    }
+
+    function traceSamples(getPoint, steps = 140) {
+      return Array.from({ length: steps + 1 }, (_, index) => {
+        const z = getPoint(index / steps);
+        return { z, image: map.apply(z) };
+      });
+    }
+
+    function makeGrid() {
+      const lines = [];
+      for (const horizontal of [true, false]) {
+        const fixedSpan = horizontal ? map.domain.y : map.domain.x;
+        const run = horizontal ? map.domain.x : map.domain.y;
+        const increment = horizontal ? map.step.y : map.step.x;
+        const steps = Math.round(fixedSpan / increment);
+        for (let n = -steps; n <= steps; n++) {
+          const fixed = n * fixedSpan / steps;
+          for (const [first, last] of lineIntervals(horizontal, fixed, run)) {
+            const samples = traceSamples((fraction) => {
+              const along = (1 - fraction) * first + fraction * last;
+              return horizontal ? point(along, fixed) : point(fixed, along);
+            });
+            lines.push({ horizontal, axis: n === 0, edge: Math.abs(n) === steps, samples });
+          }
+        }
+      }
+      return lines;
+    }
+
+    function makeGuide() {
+      if (airfoilMode) {
+        const center = map.airfoil.center;
+        const tip = map.critical;
+        const radial = point(tip.x - center.x, tip.y - center.y);
+        return traceSamples((fraction) => {
+          if (fraction === 0 || fraction === 1) return tip;
+          const offset = multiply(radial, inPolar(1, 2 * Math.PI * fraction));
+          return point(center.x + offset.x, center.y + offset.y);
+        }, 256);
+      }
+      if (map.guide === "circle") return traceSamples((fraction) => inPolar(1, 2 * Math.PI * fraction));
+      if (map.guide === "real") return traceSamples((fraction) => point((2 * fraction - 1) * map.domain.x, 0));
+      return [];
+    }
+
+    function resizeCanvas(canvas) {
+      const { width, height } = canvas.getBoundingClientRect();
+      const ratio = window.devicePixelRatio || 1;
+      canvas.width = Math.round(width * ratio);
+      canvas.height = Math.round(height * ratio);
+      const ctx = canvas.getContext("2d");
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      views.set(canvas, { ctx, width, height });
+    }
+
+    function makeView(canvas, span, magnification = 1) {
+      const { ctx, width, height } = views.get(canvas);
+      const scale = magnification * Math.min((width / 2 - 39) / span.x, (height / 2 - 27) / span.y);
+      const center = point(width / 2, height / 2);
+      return {
+        ctx, width, height, scale, center,
+        project: (z) => point(center.x + z.x * scale, center.y - z.y * scale)
+      };
+    }
+
+    function drawAxes(view, isSource) {
+      const { ctx, width, height, center, scale } = view;
+      ctx.clearRect(0, 0, width, height);
+      ctx.beginPath();
+      ctx.moveTo(15, center.y);
+      ctx.lineTo(width - 15, center.y);
+      ctx.moveTo(center.x, 13);
+      ctx.lineTo(center.x, height - 13);
+      ctx.strokeStyle = "#4c627d";
+      ctx.lineWidth = 1;
+      ctx.setLineDash([3, 5]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      const unit = scale >= 34 ? 1 : scale >= 18 ? 2 : 4;
+      ctx.font = "11px Consolas, monospace";
+      ctx.fillStyle = "#9ab0c9";
+      ctx.textAlign = "center";
+      for (let i = unit; i * scale < width / 2 - 43; i += unit) {
+        ctx.fillText(String(i), center.x + i * scale, height - 8);
+        ctx.fillText("−" + i, center.x - i * scale, height - 8);
+      }
+      ctx.textAlign = "right";
+      for (let i = unit; i * scale < height / 2 - 19; i += unit) {
+        ctx.fillText(String(i), 26, center.y - i * scale + 4);
+        ctx.fillText("−" + i, 26, center.y + i * scale + 4);
+      }
+      const symbol = isSource ? "z" : "w";
+      ctx.fillStyle = "#d5e4f8";
+      ctx.fillText("Re " + symbol, width - 13, center.y - 9);
+      ctx.textAlign = "left";
+      ctx.fillText("Im " + symbol, center.x + 7, 14);
+    }
+
+    function trace(view, samples, t, fillColor) {
+      const { ctx, project } = view;
+      ctx.beginPath();
+      for (let i = 0; i < samples.length; i++) {
+        const { z, image } = samples[i];
+        const p = project(mix(z, image, t));
+        if (i === 0) ctx.moveTo(p.x, p.y);
+        else ctx.lineTo(p.x, p.y);
+      }
+      if (fillColor) {
+        ctx.closePath();
+        ctx.fillStyle = fillColor;
+        ctx.fill();
+      }
+      ctx.stroke();
+    }
+
+    function drawGrid(view, t) {
+      const { ctx } = view;
+      const emphasis = airfoilMode ? .36 : 1;
+      for (const line of grid) {
+        ctx.strokeStyle = line.horizontal ? colors.horizontal : colors.vertical;
+        ctx.globalAlpha = emphasis * (line.axis ? .82 : line.edge ? .53 : .36);
+        ctx.lineWidth = line.axis ? 1.65 : 1;
+        trace(view, line.samples, t);
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    function drawGuides(view, t, isSource) {
+      const { ctx, center, project, scale, width } = view;
+      if (!isSource && t === 1 && map.guide === "real") {
+        ctx.beginPath();
+        ctx.arc(center.x, center.y, scale, 0, 2 * Math.PI);
+        ctx.strokeStyle = colors.guide;
+        ctx.lineWidth = 1.3;
+        ctx.setLineDash([4, 5]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+      if (airfoilMode && isSource) {
+        ctx.beginPath();
+        ctx.arc(center.x, center.y, scale, 0, 2 * Math.PI);
+        ctx.strokeStyle = "#849db6";
+        ctx.lineWidth = 1.2;
+        ctx.setLineDash([4, 5]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+      if (guide.length) {
+        ctx.strokeStyle = colors.guide;
+        ctx.lineWidth = airfoilMode ? 2.8 : 2.2;
+        ctx.lineJoin = "round";
+        trace(view, guide, t, airfoilMode ? "#ffe4a021" : undefined);
+      }
+      if (airfoilMode) drawAirfoilTip(view, t, isSource);
+      if (isSource && map.cut) {
+        const edge = project(point(-map.domain.x, 0));
+        ctx.beginPath();
+        ctx.moveTo(edge.x, center.y);
+        ctx.lineTo(center.x, center.y);
+        ctx.strokeStyle = colors.cut;
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 5]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+      if (!isSource && t === 1 && map.strip) {
+        ctx.beginPath();
+        for (const boundary of [-Math.PI, Math.PI]) {
+          const y = project(point(0, boundary)).y;
+          ctx.moveTo(15, y);
+          ctx.lineTo(width - 15, y);
+        }
+        ctx.strokeStyle = colors.cut;
+        ctx.lineWidth = 1.1;
+        ctx.setLineDash([5, 5]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+      if (isSource && (map.pole || map.cut)) {
+        const marker = project(map.pole || point(0, 0));
+        ctx.beginPath();
+        ctx.arc(marker.x, marker.y, 4.5, 0, 2 * Math.PI);
+        ctx.fillStyle = colors.ink;
+        ctx.fill();
+        ctx.strokeStyle = colors.cut;
+        ctx.lineWidth = 1.6;
+        ctx.stroke();
+      }
+    }
+
+    function drawAirfoilTip(view, t, isSource) {
+      const { ctx, project, width, height } = view;
+      const { z, image } = guide[0];
+      const tip = project(mix(z, image, t));
+      if (tip.x < 0 || tip.x > width || tip.y < 0 || tip.y > height) return;
+      ctx.beginPath();
+      ctx.arc(tip.x, tip.y, 4.5, 0, 2 * Math.PI);
+      ctx.fillStyle = colors.guide;
+      ctx.fill();
+      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = colors.ink;
+      ctx.stroke();
+
+      const label = isSource ? "z = 1" : t === 1 ? "尖尾 w = 2" : "";
+      if (!label) return;
+      ctx.font = '12px "Microsoft YaHei", sans-serif';
+      ctx.textAlign = "left";
+      ctx.fillText(label, Math.min(tip.x + 8, width - ctx.measureText(label).width - 5), Math.max(14, tip.y - 9));
+    }
+
+    function arrow(view, origin, direction, color) {
+      const norm = Math.hypot(direction.x, direction.y);
+      if (!Number.isFinite(norm) || norm * arrowLength < .5) return;
+      const { ctx, width, height } = view;
+      // Once the tip is beyond the canvas diagonal, its remaining length is off-screen.
+      const length = Math.min(arrowLength * norm, Math.hypot(width, height) + 12);
+      const u = direction.x / norm;
+      const v = -direction.y / norm;
+      const tip = point(origin.x + u * length, origin.y + v * length);
+      const head = Math.min(5.5, .38 * length);
+      const wing = .52 * head;
+      ctx.beginPath();
+      ctx.moveTo(origin.x, origin.y);
+      ctx.lineTo(tip.x, tip.y);
+      ctx.moveTo(tip.x - u * head - v * wing, tip.y - v * head + u * wing);
+      ctx.lineTo(tip.x, tip.y);
+      ctx.lineTo(tip.x - u * head + v * wing, tip.y - v * head - u * wing);
+      ctx.lineJoin = "round";
+      ctx.lineCap = "round";
+      ctx.lineWidth = 2.8;
+      ctx.strokeStyle = colors.ink;
+      ctx.stroke();
+      ctx.lineWidth = 1.15;
+      ctx.strokeStyle = color;
+      ctx.stroke();
+    }
+
+    function localMultiplier(z, t) {
+      if (t === 0) return point(1, 0);
+      if (excluded(z)) return null;
+      if (t === 1 && criticalAt(z)) return point(0, 0);
+      return mix(point(1, 0), map.derivative(z), t);
+    }
+
+    function headingVector(name) {
+      return inPolar(1, headings[name] * Math.PI / 180);
+    }
+
+    function rotationHandle(origin, name) {
+      const direction = headingVector(name);
+      return point(origin.x + direction.x * arrowLength, origin.y - direction.y * arrowLength);
+    }
+
+    function drawDirections(view, name, t, origin, isSource) {
+      const multiplier = localMultiplier(points[name], t);
+      if (!finite(multiplier)) return;
+      const first = multiply(multiplier, headingVector(name));
+      const second = point(-first.y, first.x);
+      const { ctx } = view;
+      ctx.globalAlpha = name === selected ? 1 : .7;
+      arrow(view, origin, first, colors.horizontal);
+      arrow(view, origin, second, colors.vertical);
+      ctx.globalAlpha = 1;
+      if (isSource && name === selected) {
+        const handle = rotationHandle(origin, name);
+        ctx.beginPath();
+        ctx.arc(handle.x, handle.y, 4, 0, 2 * Math.PI);
+        ctx.strokeStyle = colors.horizontal;
+        ctx.lineWidth = 1.15;
+        ctx.stroke();
+      }
+    }
+
+    function drawMark(view, center, key, label, merged, labelBelow = false) {
+      const { ctx, width, height } = view;
+      ctx.beginPath();
+      if (key === "a" || merged) {
+        ctx.arc(center.x, center.y, merged ? 8 : 5, 0, Math.PI * 2);
+      } else {
+        ctx.moveTo(center.x, center.y - 6);
+        ctx.lineTo(center.x + 6, center.y);
+        ctx.lineTo(center.x, center.y + 6);
+        ctx.lineTo(center.x - 6, center.y);
+        ctx.closePath();
+      }
+      ctx.fillStyle = merged ? colors.ink : colors[key];
+      ctx.strokeStyle = merged ? colors.a : colors.ink;
+      ctx.lineWidth = 2;
+      ctx.fill();
+      ctx.stroke();
+      if (!label) return;
+      ctx.font = "bold 13px Consolas, monospace";
+      const labelWidth = ctx.measureText(label).width;
+      const x = Math.max(4, Math.min(center.x + 11, width - labelWidth - 5));
+      const y = Math.max(14, Math.min(center.y + (labelBelow ? 21 : -11), height - 5));
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = colors.ink;
+      ctx.strokeText(label, x, y);
+      ctx.fillStyle = colors[key];
+      ctx.textAlign = "left";
+      ctx.fillText(label, x, y);
+    }
+
+    function drawPlot(view, t, isSource) {
+      drawAxes(view, isSource);
+      drawGrid(view, t);
+      drawGuides(view, t, isSource);
+      const imageA = imageOf(points.a, t);
+      const imageB = imageOf(points.b, t);
+      const visible = (z) => z.x >= 0 && z.x <= view.width && z.y >= 0 && z.y <= view.height;
+      const a = finite(imageA) ? view.project(imageA) : null;
+      const b = finite(imageB) ? view.project(imageB) : null;
+      const exactMatch = t === 0 || (t === 1 && map.injective);
+      const merged = a !== null && b !== null && (exactMatch ? samePoint(points.a, points.b) : coincides(imageA, imageB));
+      const marks = { a, b };
+      for (const name of [selected === "a" ? "b" : "a", selected]) {
+        const position = marks[name];
+        if (position && visible(position)) drawDirections(view, name, t, position, isSource);
+      }
+      if (a && visible(a)) {
+        drawMark(view, a, "a", merged ? "A / B" : "A", merged);
+      }
+      if (b && visible(b)) {
+        drawMark(view, b, "b", merged ? "" : "B", false, a !== null && separation(a, b) < 32);
+      }
+    }
+
+    function drawSource() {
+      sourceView = makeView(source, map.domain);
+      drawPlot(sourceView, 0, true);
+      byId("source-a").textContent = complexText(points.a);
+      byId("source-b").textContent = complexText(points.b);
+    }
+
+    function describeLocalChange(z) {
+      const multiplier = localMultiplier(z, progress);
+      if (multiplier === null) return excluded(z) + "。";
+      if (!finite(multiplier)) return "伸缩超出数值范围。";
+      const factor = Math.hypot(multiplier.x, multiplier.y);
+      if (!Number.isFinite(factor)) return "伸缩超出数值范围。";
+      if (factor === 0) {
+        if (progress === 1 && criticalAt(z)) {
+          const angle = map.criticalOrder === 3 ? "270°" : "180°";
+          return "伸缩 ×0，箭头缩成点。两条正向射线的像相差 " + angle + "（逆时针）。";
+        }
+        return "伸缩 ×0，两支箭头缩成点。";
+      }
+      const degrees = Math.atan2(multiplier.y, multiplier.x) * 180 / Math.PI;
+      const turn = Math.round(degrees * 10) / 10;
+      const rotation = Math.abs(turn) === 180 ? "旋转 180°"
+        : turn === 0 ? "旋转 0°" : (turn > 0 ? "逆时针 " : "顺时针 ") + Math.abs(turn) + "°";
+      const scale = factor < .001 || factor >= 10000 ? factor.toExponential(2) : numberText(factor);
+      return rotation + " · 伸缩 ×" + scale + " · 夹角 90°";
+    }
+
+    function drawTarget() {
+      const imageSpan = airfoilMode ? map.airfoil.image : map.image;
+      const view = makeView(target, mix(map.domain, imageSpan, progress), Number(zoom.value));
+      drawPlot(view, progress, false);
+      for (const name of ["a", "b"]) {
+        const image = imageOf(points[name], progress);
+        const text = image === null ? map.pole ? "∞（极点）" : "未定义"
+          : finite(image) ? complexText(image) : "超出数值范围";
+        byId("target-" + name).textContent = text;
+        const readout = byId(name === "a" ? "angle-result" : "angle-result-b");
+        const description = describeLocalChange(points[name]);
+        if (readout.textContent !== description) readout.textContent = description;
+      }
+    }
+
+    function updateProgress(value) {
+      progress = value;
+      const percent = value === 1 ? 100 : Math.min(99, Math.round(value * 100));
+      slider.value = percent;
+      byId("percent").textContent = percent + "%";
+      const title = value === 1 ? (airfoilMode ? "机翼截线" : "映射后的网格") : value === 0 ? "变形起点" : "变形中的网格";
+      const formula = value === 1 ? "w = " + map.formula
+        : airfoilMode ? "w<sub>t</sub> = z + t/z" : "w<sub>t</sub> 平面";
+      if (targetTitle.textContent !== title) targetTitle.textContent = title;
+      if (equation.innerHTML !== formula) equation.innerHTML = formula;
+      drawTarget();
+    }
+
+    function observe() {
+      const a = imageOf(points.a);
+      const b = imageOf(points.b);
+      let comparison;
+      if (a === null || b === null) {
+        const names = [a === null ? "A" : "", b === null ? "B" : ""].filter(Boolean).join("、");
+        comparison = names + " 没有有限的像。";
+      } else if (!finite(a) || !finite(b)) {
+        comparison = "像的坐标超出数值范围。";
+      } else if (samePoint(points.a, points.b)) {
+        comparison = "A、B 选在了同一点。";
+      } else if (!map.injective && coincides(a, b)) {
+        comparison = "A、B 不同，像重合。";
+      } else {
+        const distance = separation(a, b);
+        const distanceText = distance < .001 || distance >= 10000 ? distance.toExponential(2) : numberText(distance);
+        comparison = "像相距 " + distanceText + "。";
+      }
+      byId("pair-result").textContent = comparison;
+    }
+
+    function refreshPoints() {
+      const z = points[selected];
+      // Keep full precision so submitting a preset again preserves its exact coordinates.
+      coordinateInputs[0].value = z.x;
+      coordinateInputs[1].value = z.y;
+      drawSource();
+      drawTarget();
+      observe();
+    }
+
+    function stop() {
+      if (animation !== null) cancelAnimationFrame(animation);
+      animation = null;
+      play.textContent = progress > 0 && progress < 1 ? "继续变形" : "播放变形";
+    }
+
+    function reducedMotion() {
+      return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    }
+
+    function ease(phase) {
+      return phase * phase * (3 - 2 * phase);
+    }
+
+    function playAnimation(start, reducedMotionFrame = 1) {
+      if (reducedMotion()) {
+        updateProgress(reducedMotionFrame);
+        stop();
+        return;
+      }
+      updateProgress(start);
+      const began = performance.now();
+      const remaining = (1 - start) * duration;
+      play.textContent = "暂停变形";
+      function frame(now) {
+        const phase = Math.max(0, Math.min(1, (now - began) / remaining));
+        updateProgress(phase === 1 ? 1 : start + (1 - start) * ease(phase));
+        if (phase === 1) stop();
+        else animation = requestAnimationFrame(frame);
+      }
+      animation = requestAnimationFrame(frame);
+    }
+
+    function selectPoint(name) {
+      selected = name;
+      pointButtons.forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.point === name)));
+      updateHeadingInput();
+    }
+
+    function updateHeadingInput() {
+      const degrees = Math.round(headings[selected]) % 360;
+      heading.value = degrees;
+      byId("heading-label").textContent = selected.toUpperCase() + " 点箭头方向";
+      byId("heading-value").textContent = degrees + "°";
+    }
+
+    function rotatePoint(name, degrees) {
+      headings[name] = (degrees % 360 + 360) % 360;
+      updateHeadingInput();
+      drawSource();
+      drawTarget();
+    }
+
+    function cancelTravel(name) {
+      if (name) journeys.delete(name);
+      else journeys.clear();
+      if (journeys.size === 0 && travelFrame !== null) {
+        cancelAnimationFrame(travelFrame);
+        travelFrame = null;
+      }
+    }
+
+    function travelStep(now) {
+      travelFrame = null;
+      for (const [name, trip] of journeys) {
+        const elapsed = Math.max(0, Math.min(1, (now - trip.start) / trip.duration));
+        points[name] = elapsed === 1 ? trip.end : mix(trip.from, trip.end, ease(elapsed));
+        if (elapsed === 1) journeys.delete(name);
+      }
+      refreshPoints();
+      if (journeys.size) travelFrame = requestAnimationFrame(travelStep);
+    }
+
+    function movePointTo(name, end) {
+      cancelTravel(name);
+      const from = points[name];
+      if (samePoint(from, end)) return;
+      if (reducedMotion()) {
+        points[name] = end;
+        refreshPoints();
+        return;
+      }
+      const length = separation(from, end) * sourceView.scale;
+      journeys.set(name, { from, end, start: performance.now(), duration: Math.min(1050, 520 + length * 1.05) });
+      if (travelFrame === null) travelFrame = requestAnimationFrame(travelStep);
+    }
+
+    function pointerPosition(event) {
+      const bounds = source.getBoundingClientRect();
+      return point(event.clientX - bounds.left, event.clientY - bounds.top);
+    }
+
+    function pointAt(position, clampToGrid) {
+      const { center, scale } = sourceView;
+      const x = (position.x - center.x) / scale;
+      const y = (center.y - position.y) / scale;
+      const { x: maxX, y: maxY } = map.domain;
+      if (!clampToGrid && (Math.abs(x) > maxX || Math.abs(y) > maxY)) return null;
+      const snap = (value, bound) => Number(Math.max(-bound, Math.min(bound, value)).toFixed(3));
+      return point(snap(x, maxX), snap(y, maxY));
+    }
+
+    function pointerHit(position) {
+      const other = selected === "a" ? "b" : "a";
+      const origin = sourceView.project(points[selected]);
+      const otherOrigin = sourceView.project(points[other]);
+      const selectedGap = separation(position, origin);
+      const otherGap = separation(position, otherOrigin);
+      if (Math.min(selectedGap, otherGap) <= 13) {
+        const name = selectedGap <= otherGap ? selected : other;
+        const anchor = name === selected ? origin : otherOrigin;
+        return { kind: "move", name, offset: point(position.x - anchor.x, position.y - anchor.y) };
+      }
+      if (separation(position, rotationHandle(origin, selected)) <= 13) return { kind: "rotate", name: selected };
+      return { kind: "click", name: selected };
+    }
+
+    function beginPointer(event) {
+      if (!event.isPrimary || event.button !== 0 || gesture) return;
+      const position = pointerPosition(event);
+      const hit = pointerHit(position);
+      gesture = { ...hit, id: event.pointerId, start: position };
+      source.setPointerCapture(event.pointerId);
+      if (hit.kind !== "click") {
+        cancelTravel(hit.name);
+        selectPoint(hit.name);
+        refreshPoints();
+        source.style.cursor = "grabbing";
+      }
+    }
+
+    function movePointer(event) {
+      const position = pointerPosition(event);
+      if (!gesture) {
+        source.style.cursor = pointerHit(position).kind === "click" ? "crosshair" : "grab";
+        return;
+      }
+      if (gesture.id !== event.pointerId) return;
+      if (gesture.kind === "move") {
+        const { offset, name } = gesture;
+        points[name] = pointAt(point(position.x - offset.x, position.y - offset.y), true);
+        refreshPoints();
+      } else if (gesture.kind === "rotate") {
+        const origin = sourceView.project(points[gesture.name]);
+        if (separation(position, origin) > 3) {
+          const angle = Math.atan2(origin.y - position.y, position.x - origin.x) * 180 / Math.PI;
+          rotatePoint(gesture.name, angle);
+        }
+      }
+    }
+
+    function endPointer(event) {
+      if (gesture?.id !== event.pointerId) return;
+      const { kind, name, start } = gesture;
+      gesture = null;
+      source.style.cursor = "crosshair";
+      if (event.type !== "pointerup" || kind !== "click") return;
+      const position = pointerPosition(event);
+      if (separation(start, position) > 9) return;
+      const end = pointAt(position, false);
+      if (end) movePointTo(name, end);
+    }
+
+    function specialPoint() {
+      return map.critical || map.pole || (map.cut ? point(0, 0) : null);
+    }
+
+    function showSpecialPoint(z) {
+      cancelTravel("a");
+      points.a = z;
+      selectPoint("a");
+      updateProgress(1);
+      stop();
+      refreshPoints();
+    }
+
+    function updateMapNotes() {
+      const example = airfoilMode ? map.airfoil : map;
+      byId("question").textContent = example.question;
+      byId("map-note").hidden = !example.note;
+      byId("map-note-text").textContent = example.note || "";
+      const lesson = byId("map-lesson");
+      lesson.hidden = !map.airfoil;
+      byId("joukowski-profiles").hidden = !map.airfoil;
+      const profile = airfoilMode ? "airfoil" : "circle";
+      profileButtons.forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.joukowskiProfile === profile)));
+    }
+
+    function chooseProfile(profile, autoplay = true) {
+      stop();
+      cancelTravel();
+      airfoilMode = profile === "airfoil";
+      guide = makeGuide();
+      const quarterTurn = (guide.length - 1) / 4;
+      const [a, b] = airfoilMode ? [guide[quarterTurn].z, guide[3 * quarterTurn].z] : map.sample;
+      points = { a, b };
+      zoom.value = "1";
+      updateMapNotes();
+      if (airfoilMode && autoplay) playAnimation(0);
+      else {
+        updateProgress(1);
+        stop();
+      }
+      refreshPoints();
+    }
+
+    function chooseMap(name) {
+      stop();
+      cancelTravel();
+      map = maps[name];
+      airfoilMode = false;
+      grid = makeGrid();
+      guide = makeGuide();
+      points = { a: map.sample[0], b: map.sample[1] };
+      zoom.value = "1";
+      mapButtons.forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.map === name)));
+      updateMapNotes();
+      byId("pair").textContent = map.pairLabel || "查看不同点同像";
+      byId("critical").disabled = specialPoint() === null;
+      byId("critical").textContent = map.critical ? "查看临界点" : map.pole ? "查看极点"
+        : map.cut ? "查看支点" : "无临界点";
+      byId("pole").hidden = !(map.critical && map.pole);
+      for (const [i, span] of [map.domain.x, map.domain.y].entries()) {
+        coordinateInputs[i].min = -span;
+        coordinateInputs[i].max = span;
+      }
+      updateProgress(1);
+      stop();
+      refreshPoints();
+    }
+
+    for (const canvas of [source, target]) resizeCanvas(canvas);
+    const openAirfoil = window.location.hash === "#airfoil";
+    chooseMap(openAirfoil ? "joukowski" : "square");
+    if (openAirfoil) chooseProfile("airfoil", false);
+    byId("offline-download").hidden = window.location.protocol === "file:";
+
+    const resize = new ResizeObserver((entries) => {
+      for (const { target: canvas } of entries) resizeCanvas(canvas);
+      drawSource();
+      drawTarget();
+    });
+    resize.observe(source);
+    resize.observe(target);
+
+    byId("airfoil-demo").addEventListener("click", () => {
+      chooseMap("joukowski");
+      chooseProfile("airfoil");
+    });
+    mapButtons.forEach((button) => button.addEventListener("click", () => chooseMap(button.dataset.map)));
+    profileButtons.forEach((button) => button.addEventListener("click", () => chooseProfile(button.dataset.joukowskiProfile)));
+    pointButtons.forEach((button) => button.addEventListener("click", () => {
+      selectPoint(button.dataset.point);
+      refreshPoints();
+    }));
+    source.addEventListener("pointerdown", beginPointer);
+    source.addEventListener("pointermove", movePointer);
+    for (const event of ["pointerup", "pointercancel", "lostpointercapture"]) {
+      source.addEventListener(event, endPointer);
+    }
+    heading.addEventListener("input", () => rotatePoint(selected, heading.valueAsNumber));
+    coordinateInputs.forEach((input) => input.addEventListener("focus", () => cancelTravel(selected)));
+    byId("coordinates").addEventListener("submit", (event) => {
+      event.preventDefault();
+      cancelTravel(selected);
+      points[selected] = point(coordinateInputs[0].valueAsNumber, coordinateInputs[1].valueAsNumber);
+      refreshPoints();
+    });
+    byId("pair").addEventListener("click", () => {
+      cancelTravel();
+      [points.a, points.b] = map.pair;
+      updateProgress(1);
+      stop();
+      refreshPoints();
+    });
+    byId("critical").addEventListener("click", () => showSpecialPoint(specialPoint()));
+    byId("pole").addEventListener("click", () => showSpecialPoint(map.pole));
+    slider.addEventListener("input", () => {
+      updateProgress(slider.valueAsNumber / 100);
+      stop();
+    });
+    zoom.addEventListener("change", drawTarget);
+    play.addEventListener("click", () => {
+      if (animation !== null) {
+        stop();
+        return;
+      }
+      const replay = progress === 1;
+      playAnimation(replay ? 0 : progress, replay ? 0 : 1);
+    });
+  </script>
+</body>
+</html>
