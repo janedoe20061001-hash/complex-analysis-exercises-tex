@@ -793,7 +793,8 @@
       if (!label) return;
       ctx.font = '12px "Microsoft YaHei", sans-serif';
       ctx.textAlign = "left";
-      ctx.fillText(label, Math.min(tip.x + 8, width - ctx.measureText(label).width - 5), Math.max(14, tip.y - 9));
+      const labelY = isSource ? Math.max(14, tip.y - 9) : Math.min(height - 5, tip.y + 21);
+      ctx.fillText(label, Math.min(tip.x + 8, width - ctx.measureText(label).width - 5), labelY);
     }
 
     function arrow(view, origin, direction, color) {
