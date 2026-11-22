@@ -6,7 +6,7 @@
 
 ## 复平面变形实验室
 
-[打开网页版](https://janedoe20061001-hash.github.io/complex-analysis-exercises-tex/) · [直达机翼演示](https://janedoe20061001-hash.github.io/complex-analysis-exercises-tex/#airfoil) · [下载离线版](docs/complex-grid-lab.zip)
+[打开网页版](https://binhaodang.github.io/complex-analysis-exercises-tex/) · [直达机翼演示](https://binhaodang.github.io/complex-analysis-exercises-tex/#airfoil) · [下载离线版](docs/complex-grid-lab.zip)
 
 九种复函数的交互演示。在任一平面拖动 A、B，或点击空白处，另一图会跟随更新。转动一对垂直箭头，比较映射前后的转角和伸缩倍数。还可以播放偏心圆变成机翼截线的过程。在「自定义曲线」中，可同时绘制两条曲线，输入 `y=\frac{1}{2}\sin(2x)` 或 `x^2+y^2=1`，先预览排版后的公式，再随进度条观察曲线的像。离线版解压后用浏览器打开 `index.html`。
 
