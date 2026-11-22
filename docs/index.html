@@ -18,11 +18,14 @@
   <meta name="twitter:card" content="summary_large_image">
   <style>
     :root {
-      --ink: #12243a;
-      --muted: #4b5d71;
-      --blue: #0756a0;
-      --border: #d7e1ec;
-      --paper: #f3f7fb;
+      --ink: #142638;
+      --muted: #526477;
+      --accent: #075c69;
+      --accent-hover: #064957;
+      --border: #dbe4e9;
+      --paper: #f2f6f7;
+      --surface: #fff;
+      --soft: #edf3f4;
       --navy: #0c2037;
       --a: #76eed6;
       --b: #ffcd79;
@@ -30,161 +33,223 @@
       color: var(--ink);
       background: var(--paper);
     }
+
     *, *::before, *::after { box-sizing: border-box; }
     body { margin: 0; }
-    button, input { font: inherit; }
+    [hidden] { display: none !important; }
+    button, input, select { font: inherit; }
     button { cursor: pointer; }
-    :focus-visible { outline: 3px solid #4287d0; outline-offset: 3px; }
-    .wrap { width: min(1200px, calc(100% - 64px)); margin-inline: auto; }
-    .course-bar {
-      border-bottom: 1px solid var(--border);
-      background: #fff;
-    }
+    button:disabled { cursor: default; }
+    :focus-visible { outline: 2px solid #248491; outline-offset: 3px; }
+    .wrap { width: min(1248px, calc(100% - 64px)); margin-inline: auto; }
+
+    .course-bar { background: var(--surface); border-bottom: 1px solid var(--border); }
     .course-bar .wrap {
-      min-height: 56px;
+      min-height: 58px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 14px;
-      font-size: 14px;
+      gap: 8px 18px;
     }
-    .course-name { display: flex; align-items: center; gap: 11px; font-weight: 700; }
-    .course-name::before { content: ""; width: 4px; height: 19px; background: #c89c39; border-radius: 2px; }
-    .top-links { display: flex; align-items: center; flex-wrap: wrap; gap: 7px 17px; }
-    .course-bar a { color: var(--blue); text-decoration: none; white-space: nowrap; }
+    .course-name { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 700; }
+    .course-name::before {
+      content: "\2102";
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      flex: none;
+      border-radius: 8px;
+      background: var(--navy);
+      color: #c3f1e9;
+      font: 19px Cambria, "Times New Roman", serif;
+    }
+    .top-links { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 18px; }
+    .course-bar a { color: var(--accent); font-size: 13px; text-decoration: none; white-space: nowrap; }
     .course-bar a:hover { text-decoration: underline; }
-    main { padding-block: 28px 34px; }
-    h1 { margin: 0; font-size: clamp(30px, 4vw, 46px); letter-spacing: -.035em; line-height: 1.15; }
-    .title-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; margin-bottom: 20px; }
-    .intro { margin: 8px 0 0; color: var(--muted); font-size: 15px; line-height: 1.65; }
-    #airfoil-demo { margin-top: 1px; }
-    .controls {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 12px 26px;
-      padding: 9px;
-      margin-bottom: 14px;
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: 13px;
+
+    main { padding-block: 31px 36px; }
+    .title-row { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; margin-bottom: 21px; }
+    h1 { margin: 0; font-size: clamp(31px, 3.5vw, 43px); letter-spacing: -.035em; line-height: 1.16; }
+    .intro { margin: 8px 0 0; color: var(--muted); font-size: 14px; line-height: 1.65; }
+
+    .studio, .panel { min-width: 0; border: 1px solid var(--border); border-radius: 16px; background: var(--surface); }
+    .studio { box-shadow: 0 4px 18px #14263809; }
+    .function-row { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 12px 17px; padding: 13px 14px; }
+    .field-title { font-size: 13px; font-weight: 700; white-space: nowrap; }
+    .choices {
+      display: grid;
+      grid-template-columns: repeat(9, minmax(0, 1fr));
+      gap: 3px;
+      padding: 4px;
+      min-width: 0;
+      background: var(--soft);
+      border-radius: 10px;
     }
-    .choices, .playback, .point-controls, .presets { display: flex; align-items: center; gap: 8px; }
-    .choices { display: grid; grid-template-columns: repeat(9, auto); gap: 3px; padding: 3px; background: #ebf1f7; border-radius: 9px; }
     .choice, .play, .outline, .point-button {
-      min-height: 38px;
+      min-height: 36px;
       border: 1px solid transparent;
       border-radius: 7px;
-      padding: 4px 12px;
-    }
-    .choice { background: transparent; color: var(--muted); padding-inline: 8px; min-width: 52px; white-space: nowrap; }
-    .choice:hover, .point-button:hover { background: #e1edf8; }
-    .choice[aria-pressed="true"], .point-button[aria-pressed="true"] {
-      background: #fff;
-      color: var(--blue);
-      border-color: #cbd9e8;
-      box-shadow: 0 1px 3px #12243a14;
-    }
-    .formula { font-family: Cambria, "Times New Roman", serif; font-style: italic; }
-    .choice .formula, .plot-head .formula { font-size: 21px; }
-    .choice .name { font-size: 14px; }
-    .choice sup { font-size: .68em; }
-    .playback { flex: 1 1 310px; max-width: 495px; min-width: 0; gap: 12px; }
-    .play { background: var(--blue); color: #fff; font-weight: 700; font-size: 14px; min-width: 94px; }
-    .play:hover { background: #074981; }
-    .slider { min-width: 0; flex: 1; display: flex; align-items: center; gap: 8px; }
-    .slider label, .slider output { font-size: 13px; color: var(--muted); white-space: nowrap; }
-    .slider input { flex: 1; min-width: 0; margin: 0; height: 32px; accent-color: var(--blue); }
-    .slider output { min-width: 4ch; text-align: right; font-variant-numeric: tabular-nums; }
-    .profile-controls { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 12px; }
-    .profile-controls[hidden] { display: none; }
-    .profile-controls [aria-pressed="true"] { background: #e1edf8; border-color: #98b7d5; font-weight: 700; }
-    .plots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
-    .plot { min-width: 0; margin: 0; overflow: hidden; border-radius: 14px; background: var(--navy); color: #eff7ff; }
-    .plot-head, .plot-values { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding-inline: 18px; }
-    .plot-head { padding-top: 13px; min-height: 48px; }
-    .plot-head strong { font-size: 16px; }
-    .plot-head .formula { color: #d9eaff; white-space: nowrap; }
-    canvas { display: block; width: 100%; height: clamp(260px, 29vw, 385px); }
-    #source { touch-action: none; cursor: crosshair; }
-    .plot-values {
-      border-top: 1px solid #263c55;
-      padding-block: 12px;
-      min-height: 48px;
-      justify-content: flex-start;
-      flex-wrap: wrap;
-      column-gap: 22px;
-      font: 14px/1.5 Consolas, "Courier New", monospace;
-      font-variant-numeric: tabular-nums;
-    }
-    .mark-a { color: var(--a); }
-    .mark-b { color: var(--b); }
-    .workbench {
-      margin-top: 14px;
-      border: 1px solid var(--border);
-      border-radius: 13px;
-      background: #fff;
-    }
-    .workbench-row { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px 18px; padding: 12px 14px; }
-    .point-controls, .presets { flex-wrap: wrap; }
-    .point-controls { margin: 0; }
-    .point-controls label { font-size: 13px; color: var(--muted); }
-    .point-controls label { display: flex; align-items: center; gap: 5px; }
-    .point-pick { display: flex; gap: 3px; background: #ebf1f7; border-radius: 8px; padding: 3px; }
-    .point-button { background: transparent; color: var(--ink); font-weight: 700; min-width: 38px; min-height: 32px; padding: 3px 9px; }
-    .coord { width: 66px; height: 34px; border: 1px solid #bfcede; border-radius: 6px; padding: 4px 6px; color: var(--ink); }
-    .outline { background: #fff; border-color: #c8d7e6; color: var(--blue); font-size: 13px; }
-    .outline:hover { background: #edf5fd; }
-    .outline:disabled { color: #596a7b; background: #f0f3f7; cursor: default; }
-    .zoom { display: flex; align-items: center; gap: 5px; color: var(--muted); font-size: 13px; }
-    .zoom select { min-height: 38px; padding-inline: 7px; border: 1px solid #c8d7e6; border-radius: 7px; background: #fff; color: var(--blue); font: inherit; }
-    .direction-row { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 20px; padding: 0 14px 12px; }
-    .direction-row .slider { flex: 1 1 270px; max-width: 415px; }
-    .direction-row p { flex: 1 1 410px; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.55; }
-    .result {
-      display: grid;
-      grid-template-columns: .9fr 1fr 1fr;
-      gap: 10px 24px;
-      border-top: 1px solid var(--border);
-      padding: 12px 16px;
-      font-size: 14px;
-      line-height: 1.6;
-    }
-    .result p { margin: 0; }
-    .result p span { color: var(--muted); }
-    .map-note { margin: 10px 2px 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
-    .map-note a { color: var(--blue); margin-inline-start: .5em; }
-    details { margin-top: 14px; color: var(--muted); font-size: 14px; line-height: 1.7; }
-    summary { width: fit-content; cursor: pointer; font-weight: 700; color: var(--blue); }
-    details p { margin: 8px 0 0; max-width: 75ch; }
-    details ul { padding-inline-start: 1.5em; }
-    details a { color: var(--blue); }
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      overflow: hidden;
-      clip-path: inset(50%);
+      padding: 5px 11px;
       white-space: nowrap;
     }
-    @media (max-width: 760px) {
-      .wrap { width: calc(100% - 30px); }
-      main { padding-top: 22px; }
-      .playback { max-width: none; }
+    .choice { min-width: 0; padding-inline: 4px; background: transparent; color: var(--muted); }
+    .choice:hover, .point-button:hover { background: #e1ebee; color: var(--ink); }
+    .choice[aria-pressed="true"], .point-button[aria-pressed="true"] {
+      background: var(--surface);
+      color: var(--accent);
+      border-color: #b8cfd3;
+      box-shadow: 0 1px 3px #14263811;
     }
-    @media (max-width: 620px) {
-      .choices { width: 100%; grid-template-columns: repeat(3, minmax(0, 1fr)); }
-      .choice { min-width: 0; padding-inline: 3px; }
-      .choice .name { font-size: 13px; }
-      .plots, .result { grid-template-columns: 1fr; }
-      canvas { height: clamp(250px, 68vw, 350px); }
-      .course-bar .wrap { font-size: 12px; }
-      .plot-head, .plot-values { padding-inline: 12px; }
-      .plot-head { flex-wrap: wrap; }
+    .formula { font-family: Cambria, "Times New Roman", serif; font-style: italic; }
+    .choice .formula { font-size: 20px; }
+    .choice .name { font-size: 13px; }
+    .choice sup { font-size: .68em; }
+    .outline { background: var(--surface); border-color: #cddbe0; color: var(--accent); font-size: 13px; font-weight: 600; }
+    .outline:hover { background: #edf5f5; border-color: #a2c1c5; }
+    .outline:disabled { background: var(--soft); color: var(--muted); border-color: var(--border); }
+    .demo { background: #e5f1ef; border-color: #ccdeda; }
+
+    .transport {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px 18px;
+      padding: 8px 14px;
+      border-block: 1px solid #e5ecf0;
+      background: #f8fafb;
+    }
+    .playback { display: flex; align-items: center; gap: 12px; flex: 1 1 370px; max-width: 590px; min-width: 0; }
+    .play { min-width: 96px; background: var(--accent); color: #fff; font-weight: 700; font-size: 13px; }
+    .play:hover { background: var(--accent-hover); }
+    .slider { display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1; }
+    .slider label, .slider output { font-size: 13px; color: var(--muted); white-space: nowrap; }
+    .slider input { flex: 1; min-width: 0; margin: 0; height: 32px; accent-color: var(--accent); }
+    .slider output { min-width: 4ch; text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .profile-controls { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
+    .profile-controls .outline { min-height: 32px; padding-inline: 9px; font-weight: 500; }
+    .profile-controls [aria-pressed="true"] { background: #e2eeed; border-color: #a6c8c7; font-weight: 700; }
+
+    .plots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; padding: 10px; }
+    .plot {
+      min-width: 0;
+      margin: 0;
+      overflow: hidden;
+      border: 1px solid #1c3449;
+      border-radius: 11px;
+      background: linear-gradient(#102942, var(--navy) 30%);
+      color: #eff7ff;
+    }
+    .plot-head, .plot-title, .plot-actions { display: flex; align-items: center; }
+    .plot-head { min-height: 48px; padding: 7px 12px; gap: 5px 10px; justify-content: space-between; flex-wrap: wrap; }
+    .plot-title { gap: 8px; min-width: 0; }
+    .plot-title strong { font-size: 14px; white-space: nowrap; }
+    .plane-symbol {
+      display: grid;
+      place-items: center;
+      flex: none;
+      width: 25px;
+      height: 25px;
+      border-radius: 6px;
+      background: #203c55;
+      color: #d4e9ff;
+    }
+    .plot-actions { justify-content: flex-end; gap: 9px; }
+    #equation { color: #d4e9ff; font-size: 19px; white-space: nowrap; }
+    .zoom { display: flex; align-items: center; gap: 5px; color: #c4d5e7; font-size: 12px; }
+    .zoom select { min-height: 27px; padding: 2px 5px; border: 1px solid #436079; border-radius: 6px; background: #1b344c; color: #eff7ff; font-size: 12px; }
+    canvas { display: block; width: 100%; height: clamp(260px, 25vw, 350px); }
+    #source { touch-action: none; cursor: crosshair; }
+    .plot-values {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0;
+      border-top: 1px solid #2a445c;
+      background: #0b1e31;
+      font: 13px/1.5 Consolas, "Courier New", monospace;
+      font-variant-numeric: tabular-nums;
+    }
+    .plot-values > span { display: flex; align-items: baseline; gap: 8px; min-width: 0; padding: 9px 12px; }
+    .plot-values > span + span { border-inline-start: 1px solid #2a445c; }
+    .plot-values b { white-space: nowrap; }
+    .plot-values b + span { overflow-wrap: anywhere; }
+    .mark-a { color: var(--a); }
+    .mark-b { color: var(--b); }
+
+    .workbench { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; margin-top: 12px; }
+    .panel { padding: 13px 15px 14px; }
+    .panel-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+    .panel h2 { margin: 0; font-size: 15px; line-height: 1.4; }
+    .point-controls, .presets { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; }
+    .point-controls label { display: flex; align-items: center; gap: 5px; font-size: 13px; color: var(--muted); }
+    .point-pick { display: flex; gap: 3px; background: var(--soft); border-radius: 8px; padding: 3px; }
+    .point-button { background: transparent; color: var(--ink); font-weight: 700; min-width: 38px; min-height: 28px; padding: 2px 8px; font-size: 13px; }
+    .coord { width: 74px; min-height: 36px; border: 1px solid #cddbe0; border-radius: 6px; padding: 4px 7px; color: var(--ink); background: #fbfcfd; }
+    .direction-row { margin-top: 7px; }
+    .direction-row p { margin: 4px 0 0; color: var(--muted); font-size: 13px; line-height: 1.55; }
+    .result { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; font-size: 13px; line-height: 1.55; }
+    .result p { margin: 0; }
+    .probe { min-width: 0; padding: 7px 9px; border-radius: 7px; background: #f1f5f7; }
+    .probe strong, .probe > span { display: block; }
+    .probe > span { margin-top: 3px; color: var(--muted); }
+    .pair-readout { grid-column: 1 / -1; color: var(--muted); }
+    .pair-readout strong { margin-inline-end: .55em; color: var(--ink); }
+    .presets { margin-top: 8px; }
+    .presets .outline { min-height: 31px; padding-inline: 8px; font-weight: 500; }
+    .map-note { margin: 13px 1px 0; padding: 9px 13px; border-inline-start: 3px solid #799fa5; border-radius: 0 7px 7px 0; background: #eaf2f3; color: var(--muted); font-size: 13px; line-height: 1.65; }
+    .map-note a { color: var(--accent); margin-inline-start: .5em; }
+    .references { margin-top: 14px; border-top: 1px solid var(--border); }
+    details { padding: 9px 1px; border-bottom: 1px solid var(--border); color: var(--muted); font-size: 13px; line-height: 1.7; }
+    summary { width: fit-content; cursor: pointer; font-weight: 700; color: var(--accent); }
+    details p { margin: 8px 0 0; max-width: 75ch; }
+    details ul { margin-block: 8px 0; padding-inline-start: 1.5em; }
+    details a { color: var(--accent); }
+
+
+    .curve-panel { margin-inline: 10px; padding: 8px 3px 11px; border-bottom: 0; border-top: 1px solid var(--border); }
+    .curve-form { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
+    .curve-form input { flex: 1 1 260px; min-width: 0; min-height: 36px; border: 1px solid #cddbe0; border-radius: 7px; padding: 5px 9px; color: var(--ink); background: #fbfcfd; }
+    .curve-form input[aria-invalid="true"] { border-color: #b04148; }
+    .curve-buttons, .curve-examples { display: flex; flex-wrap: wrap; gap: 6px; }
+    .curve-examples { margin-top: 7px; }
+    .curve-examples button { min-height: 28px; padding-inline: 7px; }
+    #curve-help { margin-top: 6px; }
+    #curve-status { margin-top: 3px; font-weight: 700; color: #6f3c83; overflow-wrap: anywhere; }
+    #curve-status.curve-error { color: #9f2836; }
+    .probe-symbol-a { color: #00766c; }
+    .probe-symbol-b { color: #855714; }
+
+    @media (max-width: 860px) {
+      .wrap { width: calc(100% - 36px); }
+      .function-row { grid-template-columns: 1fr; gap: 6px; }
+      .playback { max-width: none; }
+      .zoom-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+    }
+    @media (max-width: 660px) {
+      .wrap { width: calc(100% - 24px); }
+      .course-bar .wrap { min-height: 52px; }
+      .course-name { font-size: 12px; gap: 6px; }
+      .course-name::before { width: 24px; height: 24px; font-size: 16px; }
+      .course-bar a { font-size: 12px; }
+      .top-links { gap: 4px 10px; justify-content: flex-end; }
+      main { padding-top: 21px; }
+      .title-row { margin-bottom: 14px; }
+      .choices { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .transport { position: sticky; top: 0; z-index: 2; padding-inline: 9px; }
+      .playback { gap: 7px; }
+      .play { min-width: 78px; padding-inline: 6px; }
+      .slider { gap: 6px; }
+      .slider label, .slider output { font-size: 12px; }
+      .plots, .workbench { grid-template-columns: minmax(0, 1fr); }
+      .plots { gap: 8px; padding: 7px; }
+      canvas { height: clamp(230px, 61vw, 310px); }
+      .plot-head, .plot-values > span { padding-inline: 9px; }
+      .plot-values { font-size: 12px; }
+      .panel { padding-inline: 11px; }
     }
     @media (pointer: coarse) {
-      .choice, .play, .outline, .point-button, .coord, .zoom select { min-height: 44px; }
+      .choice, .play, .outline, .point-button, .coord, .zoom select, .profile-controls .outline, .presets .outline, .curve-form input { min-height: 44px; }
     }
   </style>
 </head>
@@ -205,113 +270,151 @@
         <h1>复平面变形实验室</h1>
         <p class="intro">拖动点和箭头，观察九种复函数怎样改变网格、角度和长度。</p>
       </div>
-      <button id="airfoil-demo" class="outline" type="button">看偏心圆变成机翼 <span aria-hidden="true">→</span></button>
+      <button id="airfoil-demo" class="outline demo" type="button">看偏心圆变成机翼 <span aria-hidden="true">→</span></button>
     </div>
-    <section class="controls" aria-label="映射与动画">
-      <div class="choices" role="group" aria-label="选择复函数">
-        <button class="choice" data-map="square" type="button" aria-label="z 的平方" aria-pressed="true"><span class="formula">z<sup>2</sup></span></button>
-        <button class="choice" data-map="cube" type="button" aria-label="z 的立方" aria-pressed="false"><span class="formula">z<sup>3</sup></span></button>
-        <button class="choice" data-map="exp" type="button" aria-label="e 的 z 次方" aria-pressed="false"><span class="formula">e<sup>z</sup></span></button>
-        <button class="choice" data-map="cos" type="button" aria-label="余弦 z" aria-pressed="false"><span class="formula">cos z</span></button>
-        <button class="choice" data-map="inverse" type="button" aria-label="z 的倒数" aria-pressed="false"><span class="formula">1/z</span></button>
-        <button class="choice" data-map="joukowski" type="button" aria-label="儒可夫斯基变换 z 加 1 除以 z" aria-pressed="false"><span class="formula">z + 1/z</span></button>
-        <button class="choice" data-map="cayley" type="button" aria-label="莫比乌斯变换 (z−i)/(z+i)" aria-pressed="false"><span class="name">莫比乌斯</span></button>
-        <button class="choice" data-map="log" type="button" aria-label="复对数主支" aria-pressed="false"><span class="formula">Log z</span></button>
-        <button class="choice" data-map="sqrt" type="button" aria-label="复平方根主支" aria-pressed="false"><span class="formula">√z</span></button>
-      </div>
-      <div class="playback">
-        <button id="play" class="play" type="button">播放变形</button>
-        <div class="slider">
-          <label for="progress">变形进度</label>
-          <input id="progress" type="range" min="0" max="100" value="100">
-          <output id="percent" for="progress" aria-hidden="true">100%</output>
+    <section class="studio" aria-label="映射实验">
+      <div class="function-row">
+        <span class="field-title" id="function-label">映射函数</span>
+        <div class="choices" role="group" aria-labelledby="function-label">
+          <button class="choice" data-map="square" type="button" aria-label="z 的平方" aria-pressed="true"><span class="formula">z<sup>2</sup></span></button>
+          <button class="choice" data-map="cube" type="button" aria-label="z 的立方" aria-pressed="false"><span class="formula">z<sup>3</sup></span></button>
+          <button class="choice" data-map="exp" type="button" aria-label="e 的 z 次方" aria-pressed="false"><span class="formula">e<sup>z</sup></span></button>
+          <button class="choice" data-map="cos" type="button" aria-label="余弦 z" aria-pressed="false"><span class="formula">cos z</span></button>
+          <button class="choice" data-map="inverse" type="button" aria-label="z 的倒数" aria-pressed="false"><span class="formula">1/z</span></button>
+          <button class="choice" data-map="joukowski" type="button" aria-label="儒可夫斯基变换 z 加 1 除以 z" aria-pressed="false"><span class="formula">z + 1/z</span></button>
+          <button class="choice" data-map="cayley" type="button" aria-label="莫比乌斯变换 (z−i)/(z+i)" aria-pressed="false"><span class="name">莫比乌斯</span></button>
+          <button class="choice" data-map="log" type="button" aria-label="复对数主支" aria-pressed="false"><span class="formula">Log z</span></button>
+          <button class="choice" data-map="sqrt" type="button" aria-label="复平方根主支" aria-pressed="false"><span class="formula">√z</span></button>
         </div>
       </div>
+      <div class="transport">
+        <div class="playback">
+          <button id="play" class="play" type="button">播放变形</button>
+          <div class="slider">
+            <label for="progress">变形进度</label>
+            <input id="progress" type="range" min="0" max="100" value="100">
+            <output id="percent" for="progress" aria-hidden="true">100%</output>
+          </div>
+        </div>
+        <div class="profile-controls" id="joukowski-profiles" role="group" aria-label="儒可夫斯基变换的参考曲线" hidden>
+          <button class="outline" type="button" data-joukowski-profile="circle" aria-pressed="true">单位圆 → 线段</button>
+          <button class="outline" type="button" data-joukowski-profile="airfoil" aria-pressed="false">偏心圆 → 机翼</button>
+        </div>
+      </div>
+
+      <div class="plots">
+        <figure class="plot">
+          <figcaption class="plot-head">
+            <div class="plot-title"><span class="plane-symbol formula" aria-hidden="true">z</span><strong>原平面</strong></div>
+          </figcaption>
+          <canvas id="source" role="img" aria-label="原复平面。可拖动 A、B，或点击空白处移动选中的点。"></canvas>
+          <div class="plot-values">
+            <span><b class="mark-a">● A</b> <span id="source-a"></span></span>
+            <span><b class="mark-b">◆ B</b> <span id="source-b"></span></span>
+          </div>
+        </figure>
+        <figure class="plot">
+          <figcaption class="plot-head">
+            <div class="plot-title"><span class="plane-symbol formula" aria-hidden="true">w</span><strong id="target-title">映射后的网格</strong></div>
+            <div class="plot-actions">
+              <span id="equation" class="formula">w = z<sup>2</sup></span>
+              <label class="zoom"><span class="zoom-label">缩放</span>
+                <select id="zoom" aria-label="像平面缩放">
+                  <option value=".5">½×</option>
+                  <option value="1" selected>1×</option>
+                  <option value="2">2×</option>
+                  <option value="4">4×</option>
+                </select>
+              </label>
+            </div>
+          </figcaption>
+          <canvas id="target" role="img" aria-label="像平面。显示 A、B 的像，以及箭头的旋转和伸缩。"></canvas>
+          <div class="plot-values">
+            <span><b class="mark-a">● A 的像</b> <span id="target-a"></span></span>
+            <span><b class="mark-b">◆ B 的像</b> <span id="target-b"></span></span>
+          </div>
+        </figure>
+      </div>
+
+      <details class="curve-panel">
+        <summary>自定义曲线</summary>
+        <form id="curve-form" class="curve-form">
+          <label class="field-title" for="curve-input">方程</label>
+          <input id="curve-input" type="text" maxlength="140" autocomplete="off" spellcheck="false"
+            placeholder="例如 y = sin(x) 或 x^2 + y^2 = 1" aria-describedby="curve-help">
+          <div class="curve-buttons">
+            <button class="outline" type="submit">绘制曲线</button>
+            <button id="clear-curve" class="outline" type="button" disabled>移除</button>
+          </div>
+        </form>
+        <div class="curve-examples" aria-label="曲线示例">
+          <button class="outline" type="button" data-curve-example="y = 0.7 sin(2x)">正弦</button>
+          <button class="outline" type="button" data-curve-example="x^2 + y^2 = 1">单位圆</button>
+        </div>
+        <p id="curve-help">在原平面可见范围内绘制。紫线会随变形进度移动。</p>
+        <p id="curve-status" role="status" hidden></p>
+      </details>
     </section>
 
-    <div class="profile-controls" id="joukowski-profiles" role="group" aria-label="儒可夫斯基变换的参考曲线" hidden>
-      <button class="outline" type="button" data-joukowski-profile="circle" aria-pressed="true">单位圆 → 线段</button>
-      <button class="outline" type="button" data-joukowski-profile="airfoil" aria-pressed="false">偏心圆 → 机翼</button>
-    </div>
-
-    <div class="plots">
-      <figure class="plot">
-        <figcaption class="plot-head"><strong>原网格</strong><span class="formula">z 平面</span></figcaption>
-        <canvas id="source" role="img" aria-label="原复平面网格。可拖动 A、B，点击空白处可让选中的点移过去。拖动选中点的蓝色箭头末端可旋转两支箭头。"></canvas>
-        <div class="plot-values">
-          <span><b class="mark-a">● A</b> <span id="source-a"></span></span>
-          <span><b class="mark-b">◆ B</b> <span id="source-b"></span></span>
-        </div>
-      </figure>
-      <figure class="plot">
-        <figcaption class="plot-head"><strong id="target-title">映射后的网格</strong><span id="equation" class="formula">w = z<sup>2</sup></span></figcaption>
-        <canvas id="target" role="img" aria-label="变形后的复平面网格，显示 A 和 B 的像及各自一对箭头的旋转与伸缩。"></canvas>
-        <div class="plot-values">
-          <span><b class="mark-a">● A 的像</b> <span id="target-a"></span></span>
-          <span><b class="mark-b">◆ B 的像</b> <span id="target-b"></span></span>
-        </div>
-      </figure>
-    </div>
-
     <section class="workbench" aria-label="选点与观察结果">
-      <div class="workbench-row">
-        <form class="point-controls" id="coordinates">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>选点与方向</h2>
           <div class="point-pick" role="group" aria-label="选择要移动的点">
-            <button class="point-button" data-point="a" aria-label="移动 A 点" aria-pressed="true" type="button">● A</button>
-            <button class="point-button" data-point="b" aria-label="移动 B 点" aria-pressed="false" type="button">◆ B</button>
+            <button class="point-button" data-point="a" aria-label="移动 A 点" aria-pressed="true" type="button"><span class="probe-symbol probe-symbol-a" aria-hidden="true">●</span> A</button>
+            <button class="point-button" data-point="b" aria-label="移动 B 点" aria-pressed="false" type="button"><span class="probe-symbol probe-symbol-b" aria-hidden="true">◆</span> B</button>
           </div>
+        </div>
+        <form class="point-controls" id="coordinates">
           <label>实部<input id="coord-x" class="coord" type="number" step="any" required></label>
           <label>虚部<input id="coord-y" class="coord" type="number" step="any" required></label>
           <button class="outline" type="submit">定位</button>
         </form>
-        <div class="presets">
+        <div class="direction-row">
+          <div class="slider">
+            <label id="heading-label" for="heading">A 点箭头方向</label>
+            <input id="heading" type="range" min="0" max="359" step="1" value="0">
+            <output id="heading-value" for="heading" aria-hidden="true">0°</output>
+          </div>
+          <p>拖动点可移动，拖动蓝色箭头末端可旋转。也可以点击空白处，让选中的点平滑移过去。</p>
+        </div>
+      </div>
+      <div class="panel" aria-labelledby="readouts-title">
+        <div class="panel-head"><h2 id="readouts-title">旋转与伸缩</h2></div>
+        <div class="result">
+          <p class="probe"><strong><span class="probe-symbol probe-symbol-a" aria-hidden="true">●</span> A 点</strong><span id="angle-result"></span></p>
+          <p class="probe"><strong><span class="probe-symbol probe-symbol-b" aria-hidden="true">◆</span> B 点</strong><span id="angle-result-b"></span></p>
+          <p class="pair-readout"><strong>最终两点的像</strong><span id="pair-result"></span></p>
+        </div>
+        <div class="presets" aria-label="查看示例">
           <button id="pair" class="outline" type="button">查看不同点同像</button>
           <button id="critical" class="outline" type="button">查看临界点</button>
           <button id="pole" class="outline" type="button" hidden>查看极点</button>
-          <label class="zoom">像平面缩放
-            <select id="zoom">
-              <option value=".5">½×</option>
-              <option value="1" selected>1×</option>
-              <option value="2">2×</option>
-              <option value="4">4×</option>
-            </select>
-          </label>
         </div>
-      </div>
-      <div class="direction-row">
-        <div class="slider">
-          <label id="heading-label" for="heading">A 点箭头方向</label>
-          <input id="heading" type="range" min="0" max="359" step="1" value="0">
-          <output id="heading-value" for="heading" aria-hidden="true">0°</output>
-        </div>
-        <p>拖动 A、B 移点。点击左图空白处，选中点会平滑移过去。拖动选中点蓝色箭头的末端可旋转整组。</p>
-      </div>
-      <div class="result" aria-label="映射读数">
-        <p><strong>最终两点的像</strong>　<span id="pair-result"></span></p>
-        <p><strong>A 当前的旋转与伸缩</strong>　<span id="angle-result"></span></p>
-        <p><strong>B 当前的旋转与伸缩</strong>　<span id="angle-result-b"></span></p>
       </div>
     </section>
 
     <p id="map-note" class="map-note" hidden><span id="map-note-text"></span><a id="map-lesson" href="https://complex-analysis.com/content/joukowsky_airfoil.html" target="_blank" rel="noopener noreferrer" hidden>儒可夫斯基变换参考</a></p>
 
-    <details>
-      <summary>课堂提问与动画说明</summary>
-      <p id="question"></p>
-      <p>动画把每个点沿直线从 <i>z</i> 移到 <i>f</i>(<i>z</i>)，即 <i>w</i><sub>t</sub> = (1 − <i>t</i>)<i>z</i> + <i>t f</i>(<i>z</i>)。蓝色网格线来自原图横线，橙色网格线来自原图竖线。两图的箭头使用同一长度标尺，超出图框的部分会被裁切。</p>
-      <p>进度为 100% 时，局部箭头乘以同一个复数 <i>f</i>′(<i>z</i>)。当它非零时，两支箭头一起转过 arg <i>f</i>′(<i>z</i>)，长度都乘以 |<i>f</i>′(<i>z</i>)|。固定点的位置，转动原图里的箭头，观察这两个读数。</p>
-    </details>
-    <details>
-      <summary>参考动画与源代码</summary>
-      <ul>
-        <li>看整张网格怎样变形。<a href="https://www.youtube.com/watch?v=s8CSFNN_gnM" target="_blank" rel="noopener noreferrer">Jason Schattman · Twisting the Plane with Complex Numbers（YouTube）</a></li>
-        <li>看平方根的支点和单值分支。<a href="https://www.bilibili.com/video/BV1WF411X7KZ/" target="_blank" rel="noopener noreferrer">《复平面与开平方》（B 站）</a></li>
-        <li>对比直角坐标网格、分色网格和参考圆。<a href="https://3d-xplormath.org/j/docs/en/3dxm.gallery.ConformalMaps.ATG.html" target="_blank" rel="noopener noreferrer">3D-XplorMath · Conformal Maps Gallery</a></li>
-        <li>对照上半平面与单位圆盘的边界。<a href="https://complex-analysis.com/content/linear_fractional_transformations.html" target="_blank" rel="noopener noreferrer">Juan Carlos Ponce Campuzano · 分式线性变换演示</a></li>
-        <li>观察偏心圆在儒可夫斯基映射下怎样变成机翼截线。<a href="https://complex-analysis.com/content/joukowsky_airfoil.html" target="_blank" rel="noopener noreferrer">Juan Carlos Ponce Campuzano · Joukowsky Airfoil</a></li>
-        <li>查看非线性变换前如何细分网格，以及怎样保留原网格作对照。<a href="https://github.com/3b1b/manim/blob/master/example_scenes.py#L39-L62" target="_blank" rel="noopener noreferrer">3Blue1Brown · ManimGL 示例源代码</a></li>
-      </ul>
-    </details>
+    <section class="references" aria-label="课堂说明与参考资源">
+      <details>
+        <summary>课堂提问与动画说明</summary>
+        <p id="question"></p>
+        <p>动画把每个点沿直线从 <i>z</i> 移到 <i>f</i>(<i>z</i>)，即 <i>w</i><sub>t</sub> = (1 − <i>t</i>)<i>z</i> + <i>t f</i>(<i>z</i>)。蓝色网格线来自原图横线，橙色网格线来自原图竖线。两图的箭头使用同一长度标尺，超出图框的部分会被裁切。</p>
+        <p>进度为 100% 时，局部箭头乘以同一个复数 <i>f</i>′(<i>z</i>)。当它非零时，两支箭头一起转过 arg <i>f</i>′(<i>z</i>)，长度都乘以 |<i>f</i>′(<i>z</i>)|。固定点的位置，转动原图里的箭头，观察这两个读数。</p>
+      </details>
+      <details>
+        <summary>参考动画与源代码</summary>
+        <ul>
+          <li>看整张网格怎样变形。<a href="https://www.youtube.com/watch?v=s8CSFNN_gnM" target="_blank" rel="noopener noreferrer">Jason Schattman · Twisting the Plane with Complex Numbers（YouTube）</a></li>
+          <li>看平方根的支点和单值分支。<a href="https://www.bilibili.com/video/BV1WF411X7KZ/" target="_blank" rel="noopener noreferrer">《复平面与开平方》（B 站）</a></li>
+          <li>对比直角坐标网格、分色网格和参考圆。<a href="https://3d-xplormath.org/j/docs/en/3dxm.gallery.ConformalMaps.ATG.html" target="_blank" rel="noopener noreferrer">3D-XplorMath · Conformal Maps Gallery</a></li>
+          <li>对照上半平面与单位圆盘的边界。<a href="https://complex-analysis.com/content/linear_fractional_transformations.html" target="_blank" rel="noopener noreferrer">Juan Carlos Ponce Campuzano · 分式线性变换演示</a></li>
+          <li>观察偏心圆在儒可夫斯基映射下怎样变成机翼截线。<a href="https://complex-analysis.com/content/joukowsky_airfoil.html" target="_blank" rel="noopener noreferrer">Juan Carlos Ponce Campuzano · Joukowsky Airfoil</a></li>
+          <li>查看非线性变换前如何细分网格，以及怎样保留原网格作对照。<a href="https://github.com/3b1b/manim/blob/master/example_scenes.py#L39-L62" target="_blank" rel="noopener noreferrer">3Blue1Brown · ManimGL 示例源代码</a></li>
+        </ul>
+      </details>
+    </section>
   </main>
 
   <script>
@@ -522,6 +625,258 @@
     let guide = [];
     let airfoilMode = false;
     const views = new Map();
+
+    const curveFunctions = { sin: Math.sin, cos: Math.cos, tan: Math.tan, sqrt: Math.sqrt,
+      abs: Math.abs, exp: Math.exp, ln: Math.log, log: Math.log };
+    let activeCurve = null;
+    let sourceCurve = [];
+    let mappedCurve = [];
+
+    function compileExpression(expression) {
+      const matcher = /\s*(?:(\d+(?:\.\d*)?|\.\d+)([eE][+-]?\d+)?|([a-z]+)|([+\-*/^()]))/gy;
+      const tokens = [];
+      const variables = new Set();
+      let position = 0;
+      while (position < expression.length) {
+        const match = matcher.exec(expression);
+        if (!match) throw new Error("方程含有无法识别的字符。");
+        if (match[1]) tokens.push(Number(match[1] + (match[2] || "")));
+        else if (match[3] && /^[xy]+$/.test(match[3])) tokens.push(...match[3]);
+        else tokens.push(match[3] || match[4]);
+        position = matcher.lastIndex;
+      }
+      let cursor = 0;
+      const next = () => tokens[cursor];
+      const take = (token) => {
+        if (next() !== token) return false;
+        cursor++;
+        return true;
+      };
+      const expect = (token) => {
+        if (!take(token)) throw new Error("请检查括号是否成对。");
+      };
+
+      function atom() {
+        if (take("(")) {
+          const inside = sum();
+          expect(")");
+          return inside;
+        }
+        const value = tokens[cursor++];
+        if (typeof value === "number") return () => value;
+        if (value === "pi") return () => Math.PI;
+        if (value === "e") return () => Math.E;
+        if (value === "x" || value === "y") {
+          variables.add(value);
+          return value === "x" ? (x) => x : (_x, y) => y;
+        }
+        if (Object.hasOwn(curveFunctions, value)) {
+          expect("(");
+          const argument = sum();
+          expect(")");
+          return (x, y) => curveFunctions[value](argument(x, y));
+        }
+        throw new Error("可使用 x、y、π，以及 sin(x)、sqrt(x) 等函数。");
+      }
+
+      function signed() {
+        if (take("+")) return signed();
+        if (take("-")) {
+          const argument = signed();
+          return (x, y) => -argument(x, y);
+        }
+        const base = atom();
+        if (!take("^")) return base;
+        const exponent = signed();
+        return (x, y) => base(x, y) ** exponent(x, y);
+      }
+
+      function product() {
+        let result = signed();
+        while (cursor < tokens.length) {
+          const value = next();
+          const implicit = typeof value === "number" || /^[a-z(]/.test(String(value));
+          if (value !== "*" && value !== "/" && !implicit) break;
+          if (!implicit) cursor++;
+          const previous = result;
+          const following = signed();
+          result = value === "/"
+            ? (x, y) => previous(x, y) / following(x, y)
+            : (x, y) => previous(x, y) * following(x, y);
+        }
+        return result;
+      }
+
+      function sum() {
+        let result = product();
+        while (next() === "+" || next() === "-") {
+          const operation = tokens[cursor++];
+          const previous = result;
+          const following = product();
+          result = operation === "+"
+            ? (x, y) => previous(x, y) + following(x, y)
+            : (x, y) => previous(x, y) - following(x, y);
+        }
+        return result;
+      }
+
+      const evaluate = sum();
+      if (cursor !== tokens.length) throw new Error("请检查运算符和括号。");
+      return { evaluate, variables };
+    }
+
+    function compileCurve(raw) {
+      if (!raw.trim() || raw.length > 140) throw new Error("请输入不超过 140 个字符的方程。");
+      const parts = raw.toLowerCase().replaceAll("π", "pi").replaceAll("²", "^2")
+        .replaceAll("³", "^3").replace(/[−–]/g, "-").replaceAll("×", "*").replaceAll("÷", "/")
+        .replaceAll("＝", "=").split("=").map((part) => part.trim());
+      if (parts.length > 2 || parts.some((part) => !part)) throw new Error("请输入形如 y = sin(x) 的方程。");
+      const left = compileExpression(parts[0]);
+      if (parts.length === 1) {
+        if (left.variables.has("y")) throw new Error("方程含有 y 时，请写出等号两边。");
+        return { axis: "x", evaluate: left.evaluate };
+      }
+      const right = compileExpression(parts[1]);
+      if (!left.variables.size && !right.variables.size) throw new Error("方程至少需要一个变量 x 或 y。");
+      for (const [side, other] of [[0, right], [1, left]]) {
+        if (parts[side] === "y" && !other.variables.has("y")) return { axis: "x", evaluate: other.evaluate };
+        if (parts[side] === "x" && !other.variables.has("x")) return { axis: "y", evaluate: other.evaluate };
+      }
+      return { evaluate: (x, y) => left.evaluate(x, y) - right.evaluate(x, y) };
+    }
+
+    function explicitCurve(curve) {
+      const horizontal = curve.axis === "x";
+      const span = horizontal ? map.domain.x : map.domain.y;
+      const limit = horizontal ? map.domain.y : map.domain.x;
+      const segments = [];
+      let previous = null;
+      for (let step = 0; step <= 560; step++) {
+        const along = span * (step - 280) / 280;
+        const value = horizontal ? curve.evaluate(along, 0) : curve.evaluate(0, along);
+        const z = Math.abs(value) <= limit
+          ? (horizontal ? point(along, value) : point(value, along))
+          : null;
+        if (previous && z && separation(previous, z) <= limit * .3) segments.push([previous, z]);
+        previous = z;
+      }
+      return segments;
+    }
+
+    // Trace the zero contour in each cell from its edge crossings.
+    function implicitCurve(evaluate) {
+      const steps = 140;
+      const lattice = Array.from({ length: steps + 1 }, (_, row) => Array.from({ length: steps + 1 }, (_, column) => {
+        const z = point(map.domain.x * (2 * column / steps - 1), map.domain.y * (2 * row / steps - 1));
+        return { z, value: evaluate(z.x, z.y) };
+      }));
+      const segments = [];
+      for (let row = 0; row < steps; row++) {
+        for (let column = 0; column < steps; column++) {
+          const corners = [lattice[row][column], lattice[row][column + 1],
+            lattice[row + 1][column + 1], lattice[row + 1][column]];
+          if (corners.some(({ value }) => !Number.isFinite(value))) continue;
+          const crossings = [];
+          for (let edge = 0; edge < 4; edge++) {
+            const a = corners[edge];
+            const b = corners[(edge + 1) % 4];
+            if ((a.value >= 0) === (b.value >= 0)) continue;
+            const magnitude = Math.max(Math.abs(a.value), Math.abs(b.value));
+            const first = Math.abs(a.value) / magnitude;
+            const fraction = first / (first + Math.abs(b.value) / magnitude);
+            crossings.push(mix(a.z, b.z, fraction));
+          }
+          if (crossings.length === 2) segments.push(crossings);
+          if (crossings.length === 4) {
+            const center = mix(corners[0].z, corners[2].z, .5);
+            const matchesFirst = (evaluate(center.x, center.y) >= 0) === (corners[0].value >= 0);
+            if (matchesFirst) segments.push([crossings[0], crossings[1]], [crossings[2], crossings[3]]);
+            else segments.push([crossings[0], crossings[3]], [crossings[1], crossings[2]]);
+          }
+        }
+      }
+      return segments;
+    }
+
+    function crossesSingularity(a, b) {
+      if (map.cut && a.y * b.y < 0 && mix(a, b, a.y / (a.y - b.y)).x <= 0) return true;
+      if (!map.pole) return false;
+      const dx = b.x - a.x;
+      const dy = b.y - a.y;
+      const squared = dx * dx + dy * dy;
+      if (!squared) return false;
+      const fraction = ((map.pole.x - a.x) * dx + (map.pole.y - a.y) * dy) / squared;
+      return fraction > 0 && fraction < 1 && separation(mix(a, b, fraction), map.pole) < 1e-5;
+    }
+
+    function showCurveStatus(message, error = false) {
+      const status = byId("curve-status");
+      status.textContent = message;
+      status.hidden = !message;
+      status.classList.toggle("curve-error", error);
+      byId("curve-input").setAttribute("aria-invalid", String(error));
+    }
+
+    function refreshCurve() {
+      sourceCurve = [];
+      mappedCurve = [];
+      if (!activeCurve) return;
+      const limit = 4 * Math.max(map.image.x, map.image.y);
+      sourceCurve = activeCurve.axis ? explicitCurve(activeCurve) : implicitCurve(activeCurve.evaluate);
+      for (const [a, b] of sourceCurve) {
+        if (crossesSingularity(a, b)) continue;
+        const imageA = imageOf(a);
+        const imageB = imageOf(b);
+        if (finite(imageA) && finite(imageB) && separation(imageA, imageB) < limit) {
+          mappedCurve.push([{ z: a, image: imageA }, { z: b, image: imageB }]);
+        }
+      }
+      const message = !sourceCurve.length ? "当前原平面窗口内没有绘出这条曲线。"
+        : !mappedCurve.length ? "原平面已绘制。当前映射没有可绘制的曲线段。"
+        : "紫线 · " + activeCurve.label;
+      showCurveStatus(message);
+    }
+
+    function applyCurve(input) {
+      try {
+        activeCurve = { ...compileCurve(input), label: input.trim() };
+      } catch (error) {
+        showCurveStatus(error.message, true);
+        return;
+      }
+      byId("clear-curve").disabled = false;
+      refreshCurve();
+      drawSource();
+      drawTarget();
+    }
+
+    function drawCustomCurve(view, t, isSource) {
+      const { ctx, project } = view;
+      ctx.beginPath();
+      if (isSource || t === 0) {
+        for (const [a, b] of sourceCurve) {
+          const start = project(a);
+          const end = project(b);
+          ctx.moveTo(start.x, start.y);
+          ctx.lineTo(end.x, end.y);
+        }
+      } else {
+        for (const [a, b] of mappedCurve) {
+          const start = project(mix(a.z, a.image, t));
+          const end = project(mix(b.z, b.image, t));
+          ctx.moveTo(start.x, start.y);
+          ctx.lineTo(end.x, end.y);
+        }
+      }
+      ctx.lineJoin = "round";
+      ctx.lineCap = "round";
+      ctx.lineWidth = 5;
+      ctx.strokeStyle = colors.ink;
+      ctx.stroke();
+      ctx.lineWidth = 2.5;
+      ctx.strokeStyle = "#edb8ff";
+      ctx.stroke();
+    }
 
     function mix(start, end, t) {
       return point((1 - t) * start.x + t * end.x, (1 - t) * start.y + t * end.y);
@@ -894,6 +1249,7 @@
       drawAxes(view, isSource);
       drawGrid(view, t);
       drawGuides(view, t, isSource);
+      if (sourceCurve.length) drawCustomCurve(view, t, isSource);
       const imageA = imageOf(points.a, t);
       const imageB = imageOf(points.b, t);
       const visible = (z) => z.x >= 0 && z.x <= view.width && z.y >= 0 && z.y <= view.height;
@@ -1211,6 +1567,7 @@
       stop();
       cancelTravel();
       map = maps[name];
+      refreshCurve();
       airfoilMode = false;
       grid = makeGrid();
       guide = makeGuide();
@@ -1256,6 +1613,25 @@
       selectPoint(button.dataset.point);
       refreshPoints();
     }));
+    byId("curve-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      applyCurve(byId("curve-input").value);
+    });
+    document.querySelectorAll("[data-curve-example]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const input = byId("curve-input");
+        input.value = button.dataset.curveExample;
+        applyCurve(input.value);
+      });
+    });
+    byId("clear-curve").addEventListener("click", () => {
+      activeCurve = null;
+      refreshCurve();
+      showCurveStatus("");
+      byId("clear-curve").disabled = true;
+      drawSource();
+      drawTarget();
+    });
     source.addEventListener("pointerdown", beginPointer);
     source.addEventListener("pointermove", movePointer);
     for (const event of ["pointerup", "pointercancel", "lostpointercapture"]) {
