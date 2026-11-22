@@ -536,7 +536,9 @@
       const residue = multiply(k, difference);
       const strength = Math.hypot(residue.x, residue.y);
       const domain = point(4 + 1.2 * Math.max(Math.abs(a.x), Math.abs(b.x)), 2.5 + 1.2 * Math.max(Math.abs(a.y), Math.abs(b.y)));
-      const image = point(1.9 * amplitude, 1.65 * amplitude);
+      // Keep the standard window for ordinary changes of k so that dilation is visible.
+      const viewMagnitude = amplitude < .25 ? 4 * amplitude : Math.max(1, amplitude / 3);
+      const image = point(1.9 * viewMagnitude, 1.65 * viewMagnitude);
       if (!finite(domain) || !finite(image) || !Number.isFinite(distance) || !Number.isFinite(strength) ||
           strength === 0 || distance / 1e5 === 0 || !Number.isFinite(1e6 / image.y)) {
         throw new Error("参数尺度超出了绘图的数值范围。");
@@ -1962,8 +1964,13 @@
       event.preventDefault();
       try {
         const [k, a, b] = ["k", "a", "b"].map((name) => parseComplexParameter(byId("mobius-" + name).value, name));
+        const probes = samePoint(map.mobius.a, a) && samePoint(map.mobius.b, b) ? points : null;
+        const magnification = zoom.value;
         maps.cayley = makeMobius({ k, a, b });
         chooseMap("cayley");
+        if (probes) points = probes;
+        zoom.value = magnification;
+        refreshPoints();
       } catch (error) {
         const status = byId("mobius-status");
         status.textContent = error.message;
