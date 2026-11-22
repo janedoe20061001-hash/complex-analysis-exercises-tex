@@ -159,7 +159,7 @@
     .zoom { display: flex; align-items: center; gap: 5px; color: #c4d5e7; font-size: 12px; }
     .zoom select { min-height: 27px; padding: 2px 5px; border: 1px solid #436079; border-radius: 6px; background: #1b344c; color: #eff7ff; font-size: 12px; }
     canvas { display: block; width: 100%; height: clamp(260px, 25vw, 350px); }
-    #source { touch-action: none; cursor: crosshair; }
+    #source, #target { touch-action: none; cursor: crosshair; }
     .plot-values {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -198,6 +198,9 @@
     .presets .outline { min-height: 31px; padding-inline: 8px; font-weight: 500; }
     .map-note { margin: 13px 1px 0; padding: 9px 13px; border-inline-start: 3px solid #799fa5; border-radius: 0 7px 7px 0; background: #eaf2f3; color: var(--muted); font-size: 13px; line-height: 1.65; }
     .map-note a { color: var(--accent); margin-inline-start: .5em; }
+    .target-interaction-status { margin: 0 14px 9px; color: #775426; font-size: 13px; }
+    .project-credit { margin-top: 16px; color: var(--muted); font-size: 13px; line-height: 1.5; }
+    .project-credit a { color: var(--accent); font-weight: 600; text-underline-offset: 3px; }
     .references { margin-top: 14px; border-top: 1px solid var(--border); }
     details { padding: 9px 1px; border-bottom: 1px solid var(--border); color: var(--muted); font-size: 13px; line-height: 1.7; }
     summary { width: fit-content; cursor: pointer; font-weight: 700; color: var(--accent); }
@@ -365,7 +368,7 @@
               </label>
             </div>
           </figcaption>
-          <canvas id="target" role="img" aria-label="像平面。显示 A、B 的像，以及箭头的旋转和伸缩。"></canvas>
+          <canvas id="target" role="img" aria-label="像平面。可拖动 A、B 的像，或点击空白处移动选中的像点。"></canvas>
           <div class="plot-values">
             <span><b class="mark-a">● A 的像</b> <span id="target-a"></span></span>
             <span><b class="mark-b">◆ B 的像</b> <span id="target-b"></span></span>
@@ -373,6 +376,7 @@
         </figure>
       </div>
 
+      <p id="target-interaction-status" class="target-interaction-status" role="status" hidden></p>
       <details class="curve-panel">
         <summary>自定义曲线</summary>
         <div class="curve-grid">
@@ -442,7 +446,7 @@
             <input id="heading" type="range" min="0" max="359" step="1" value="0">
             <output id="heading-value" for="heading" aria-hidden="true">0°</output>
           </div>
-          <p>拖动点可移动，拖动蓝色箭头末端可旋转。也可以点击空白处，让选中的点平滑移过去。</p>
+          <p>两幅图都可以拖点或点击定位。拖动 z 平面的蓝色箭头可旋转方向。</p>
         </div>
       </div>
       <div class="panel" aria-labelledby="readouts-title">
@@ -475,6 +479,7 @@
         </ul>
       </details>
     </section>
+    <footer class="project-credit">喜欢这个实验？欢迎在 GitHub <a href="https://github.com/janedoe20061001-hash/complex-analysis-exercises-tex" target="_blank" rel="noopener noreferrer">给项目点个 Star ☆</a>。</footer>
   </main>
 
   <script>
@@ -494,6 +499,7 @@
       return inPolar(Math.exp(z.x), z.y);
     };
     const cosine = (z) => point(Math.cos(z.x) * Math.cosh(z.y), -Math.sin(z.x) * Math.sinh(z.y));
+    const add = (a, b) => point(a.x + b.x, a.y + b.y);
     const subtract = (a, b) => point(a.x - b.x, a.y - b.y);
     const defaultMobius = { k: point(1, 0), a: point(0, 1), b: point(0, -1) };
 
@@ -552,6 +558,7 @@
         domain: canonical ? point(4, 2.5) : domain,
         image,
         apply,
+        preimage: (w) => samePoint(w, k) ? null : add(b, multiply(residue, reciprocal(subtract(w, k)))),
         derivative: (z) => scalePoint(multiply(residue, square(reciprocal(subtract(z, b)))), -1),
         sample: [a, canonical ? point(1, 1) : mix(a, b, .5)],
         pair: canonical ? [point(-1, 0), point(1, 0)] : [a, b],
@@ -571,6 +578,7 @@
         image: point(6.3, 10),
         step: point(.5, .5),
         apply: square,
+        preimage: (w, from) => rootNear(w, from, 2),
         derivative: (z) => scalePoint(z, 2),
         criticalOrder: 2,
         sample: [point(1.1, .65), point(-.65, 1.15)],
@@ -583,6 +591,7 @@
         image: point(8.2, 8.2),
         step: point(.4, .4),
         apply: (z) => multiply(square(z), z),
+        preimage: (w, from) => rootNear(w, from, 3),
         derivative: (z) => scalePoint(square(z), 3),
         criticalOrder: 3,
         sample: [point(.8, .3), point(-.5, .7)],
@@ -596,6 +605,7 @@
         image: point(Math.exp(1.5), Math.exp(1.5)),
         step: point(.3, .5),
         apply: exponential,
+        preimage: exponentialPreimage,
         derivative: exponential,
         sample: [point(.4, 1), point(-.6, -1.25)],
         pair: [point(.5, -Math.PI), point(.5, Math.PI)],
@@ -606,6 +616,7 @@
         image: point(Math.cosh(1.8), Math.sinh(1.8)),
         step: point(.6, .3),
         apply: cosine,
+        preimage: cosinePreimage,
         derivative: (z) => point(-Math.sin(z.x) * Math.cosh(z.y), -Math.cos(z.x) * Math.sinh(z.y)),
         criticalOrder: 2,
         isCritical: (z) => z.y === 0 && z.x === Math.round(z.x / Math.PI) * Math.PI,
@@ -619,6 +630,7 @@
         image: point(2.5, 2.1),
         step: point(.5, .5),
         apply: reciprocal,
+        preimage: (w) => w.x === 0 && w.y === 0 ? null : reciprocal(w),
         derivative: (z) => scalePoint(square(reciprocal(z)), -1),
         sample: [point(.5, .45), point(1.1, -.8)],
         pair: [point(.6, .8), point(.6, -.8)],
@@ -637,6 +649,7 @@
           const inverse = reciprocal(z);
           return point(z.x + inverse.x, z.y + inverse.y);
         },
+        preimage: (w, from) => nearer(...reciprocalRoots(w), from),
         derivative: (z) => {
           const inverseSquared = square(reciprocal(z));
           return point(1 - inverseSquared.x, -inverseSquared.y);
@@ -663,6 +676,7 @@
         image: point(3.7, 3.35),
         step: point(.5, .5),
         apply: (z) => point(Math.log(Math.hypot(z.x, z.y)), Math.atan2(z.y, z.x)),
+        preimage: (w) => Math.abs(w.y) < Math.PI ? exponential(w) : null,
         derivative: reciprocal,
         sample: [point(.65, .7), point(-1.05, -.65)],
         pair: [point(-1, .08), point(-1, -.08)],
@@ -678,6 +692,7 @@
         image: point(1.6, 1.6),
         step: point(.5, .5),
         apply: principalRoot,
+        preimage: (w) => w.x > 0 ? square(w) : null,
         derivative: (z) => scalePoint(reciprocal(principalRoot(z)), .5),
         sample: [point(.65, .7), point(-1.05, -.65)],
         pair: [point(-1.6, .08), point(-1.6, -.08)],
@@ -724,6 +739,7 @@
     let travelFrame = null;
     let gesture = null;
     let sourceView;
+    let targetView;
     let grid = [];
     let guide = [];
     let mobiusGuide = null;
@@ -1182,23 +1198,13 @@
     }
 
     function makeMobiusGrid() {
-      const { b, distance } = map.mobius;
+      const { b } = map.mobius;
+      const step = niceStep(Math.max(map.domain.x, map.domain.y) / 10);
       const lines = [];
       for (const horizontal of [true, false]) {
         const anchor = horizontal ? b.y : b.x;
-        const span = horizontal ? map.domain.y : map.domain.x;
-        const unit = niceStep(span / 7);
-        const levels = new Set(Array.from({ length: 25 }, (_, index) => anchor + (index - 12) * unit));
-        for (const scale of [.08, .15, .26, .42, .7, 1.1, 1.7, 2.8, 4.6, 7.5, 12]) {
-          const delta = scale * distance;
-          for (const shift of [-delta, delta]) {
-            const candidate = anchor + shift;
-            if (Number.isFinite(candidate) && (Math.abs(shift) < unit || ![...levels].some((fixed) => Math.abs(fixed - candidate) < unit * .23))) {
-              levels.add(candidate);
-            }
-          }
-        }
-        for (const fixed of levels) {
+        for (let index = -24; index <= 24; index++) {
+          const fixed = anchor + index * step;
           if (Number.isFinite(fixed)) lines.push(mobiusGridLine(horizontal, fixed));
         }
       }
@@ -1537,6 +1543,95 @@
       return mix(point(1, 0), map.derivative(z), t);
     }
 
+    function nearer(a, b, reference) {
+      return separation(a, reference) <= separation(b, reference) ? a : b;
+    }
+
+    function rootNear(w, reference, order) {
+      const radius = Math.hypot(w.x, w.y) ** (1 / order);
+      const angle = Math.atan2(w.y, w.x);
+      let closest = inPolar(radius, angle / order);
+      for (let branch = 1; branch < order; branch++) {
+        closest = nearer(closest, inPolar(radius, (angle + 2 * Math.PI * branch) / order), reference);
+      }
+      return closest;
+    }
+
+    function periodicValue(value, reference) {
+      const period = 2 * Math.PI;
+      return value + period * Math.round((reference - value) / period);
+    }
+
+    function exponentialPreimage(w, reference) {
+      const magnitude = Math.hypot(w.x, w.y);
+      if (magnitude === 0) return null;
+      return point(Math.log(magnitude), periodicValue(Math.atan2(w.y, w.x), reference.y));
+    }
+
+    function reciprocalRoots(sum) {
+      const discriminant = principalRoot(subtract(square(sum), point(4, 0)));
+      const plus = scalePoint(add(sum, discriminant), .5);
+      const minus = scalePoint(subtract(sum, discriminant), .5);
+      const root = Math.hypot(plus.x, plus.y) >= Math.hypot(minus.x, minus.y) ? plus : minus;
+      return [root, reciprocal(root)];
+    }
+
+    function cosinePreimage(w, reference) {
+      const options = reciprocalRoots(scalePoint(w, 2)).map((u) => {
+        const angle = Math.atan2(u.y, u.x);
+        return point(periodicValue(angle, reference.x), -Math.log(Math.hypot(u.x, u.y)));
+      });
+      return nearer(options[0], options[1], reference);
+    }
+
+    function solvePreimage(w, t, start, tolerance) {
+      let z = start;
+      for (let iteration = 0; iteration < 24; iteration++) {
+        const image = imageOf(z, t);
+        if (!finite(image)) return null;
+        const error = separation(image, w);
+        if (error <= tolerance) return z;
+        const multiplier = localMultiplier(z, t);
+        if (!finite(multiplier)) return null;
+        const correction = multiply(subtract(image, w), reciprocal(multiplier));
+        if (!finite(correction)) return null;
+        let improved = false;
+        for (let step = 1; step >= 1 / 32; step /= 2) {
+          const next = subtract(z, scalePoint(correction, step));
+          const nextImage = imageOf(next, t);
+          if (finite(nextImage) && separation(nextImage, w) < error) {
+            z = next;
+            improved = true;
+            break;
+          }
+        }
+        if (!improved) return null;
+      }
+      const image = imageOf(z, t);
+      return finite(image) && separation(image, w) <= tolerance ? z : null;
+    }
+
+    function preimageAt(w, t, reference) {
+      if (t === 0) return w;
+      if (t === 1 && map.mobius && separation(w, map.mobius.k) * targetView.scale < 1e-7) return null;
+      const atEnd = map.preimage(w, reference);
+      if (t === 1) return finite(atEnd) && !excluded(atEnd) ? atEnd : null;
+
+      // During playback the interpolated mapping need not have the same inverse.
+      const tolerance = .06 / targetView.scale;
+      const local = solvePreimage(w, t, reference, tolerance);
+      if (local) return local;
+      const radius = Math.max(.08, Math.min(1.5, Math.hypot(reference.x, reference.y) * .25));
+      const seeds = [atEnd, w, ...[0, 1, 2, 3].map((turn) => add(reference, inPolar(radius, turn * Math.PI / 2)))];
+      let closest = null;
+      for (const seed of seeds) {
+        if (!finite(seed)) continue;
+        const result = solvePreimage(w, t, seed, tolerance);
+        if (result) closest = closest ? nearer(closest, result, reference) : result;
+      }
+      return closest;
+    }
+
     function headingVector(name) {
       return inPolar(1, headings[name] * Math.PI / 180);
     }
@@ -1652,8 +1747,8 @@
 
     function drawTarget() {
       const imageSpan = airfoilMode ? map.airfoil.image : map.image;
-      const view = makeView(target, mix(map.domain, imageSpan, progress), Number(zoom.value));
-      drawPlot(view, progress, false);
+      targetView = makeView(target, mix(map.domain, imageSpan, progress), Number(zoom.value));
+      drawPlot(targetView, progress, false);
       for (const name of ["a", "b"]) {
         const image = imageOf(points[name], progress);
         const text = image === null ? map.pole ? "∞（极点）" : "未定义"
@@ -1666,6 +1761,12 @@
     }
 
     function updateProgress(value) {
+      if (value !== progress) {
+        for (const [name, trip] of journeys) {
+          if (trip.imagePlane) cancelTravel(name);
+        }
+        showTargetStatus("");
+      }
       progress = value;
       const percent = value === 1 ? 100 : Math.min(99, Math.round(value * 100));
       slider.value = percent;
@@ -1771,15 +1872,42 @@
       }
     }
 
+    function showTargetStatus(message) {
+      const status = byId("target-interaction-status");
+      if (status.textContent !== message) status.textContent = message;
+      status.hidden = !message;
+    }
+
+    function reportPreimage(z) {
+      if (!z) {
+        showTargetStatus(progress === 1 ? "该位置没有可显示的有限原像。" : "当前进度下未找到稳定的原像。");
+        return;
+      }
+      const position = sourceView.project(z);
+      const visible = position.x >= 0 && position.x <= sourceView.width && position.y >= 0 && position.y <= sourceView.height;
+      showTargetStatus(visible ? "" : "原像在 z 平面的当前视窗之外。");
+    }
+
     function travelStep(now) {
       travelFrame = null;
       for (const [name, trip] of journeys) {
         const elapsed = Math.max(0, Math.min(1, (now - trip.start) / trip.duration));
-        points[name] = elapsed === 1 ? trip.end : mix(trip.from, trip.end, ease(elapsed));
+        const position = elapsed === 1 ? trip.end : mix(trip.from, trip.end, ease(elapsed));
+        if (trip.imagePlane) {
+          const z = preimageAt(position, progress, points[name]);
+          if (z) points[name] = z;
+          reportPreimage(z);
+        } else points[name] = position;
         if (elapsed === 1) journeys.delete(name);
       }
       refreshPoints();
       if (journeys.size) travelFrame = requestAnimationFrame(travelStep);
+    }
+
+    function queueTravel(name, from, end, scale, imagePlane = false) {
+      const length = separation(from, end) * scale;
+      journeys.set(name, { from, end, imagePlane, start: performance.now(), duration: Math.min(1050, 520 + length * 1.05) });
+      if (travelFrame === null) travelFrame = requestAnimationFrame(travelStep);
     }
 
     function movePointTo(name, end) {
@@ -1789,87 +1917,124 @@
       if (reducedMotion()) {
         points[name] = end;
         refreshPoints();
-        return;
-      }
-      const length = separation(from, end) * sourceView.scale;
-      journeys.set(name, { from, end, start: performance.now(), duration: Math.min(1050, 520 + length * 1.05) });
-      if (travelFrame === null) travelFrame = requestAnimationFrame(travelStep);
+      } else queueTravel(name, from, end, sourceView.scale);
     }
 
-    function pointerPosition(event) {
-      const bounds = source.getBoundingClientRect();
+    function moveImageTo(name, end) {
+      cancelTravel(name);
+      const z = preimageAt(end, progress, points[name]);
+      reportPreimage(z);
+      if (!z) return;
+      const from = imageOf(points[name], progress);
+      if (!finite(from) || reducedMotion()) {
+        points[name] = z;
+        refreshPoints();
+      } else if (!samePoint(from, end)) {
+        queueTravel(name, from, end, targetView.scale, true);
+      }
+    }
+
+    function pointerPosition(event, canvas) {
+      const bounds = canvas.getBoundingClientRect();
       return point(event.clientX - bounds.left, event.clientY - bounds.top);
     }
 
+    function unproject(view, position) {
+      return point((position.x - view.center.x) / view.scale, (view.center.y - position.y) / view.scale);
+    }
+
     function pointAt(position, clampToGrid) {
-      const { center, scale } = sourceView;
-      const x = (position.x - center.x) / scale;
-      const y = (center.y - position.y) / scale;
-      const { x: maxX, y: maxY } = map.domain;
+      const { x, y } = unproject(sourceView, position);
+      const maxX = map.mobius ? sourceView.width / (2 * sourceView.scale) : map.domain.x;
+      const maxY = map.mobius ? sourceView.height / (2 * sourceView.scale) : map.domain.y;
       if (!clampToGrid && (Math.abs(x) > maxX || Math.abs(y) > maxY)) return null;
       const snap = (value, bound) => Number(Math.max(-bound, Math.min(bound, value)).toFixed(3));
       return point(snap(x, maxX), snap(y, maxY));
     }
 
-    function pointerHit(position) {
+    function pointerHit(position, canvas) {
       const other = selected === "a" ? "b" : "a";
-      const origin = sourceView.project(points[selected]);
-      const otherOrigin = sourceView.project(points[other]);
-      const selectedGap = separation(position, origin);
-      const otherGap = separation(position, otherOrigin);
+      const view = canvas === source ? sourceView : targetView;
+      const t = canvas === source ? 0 : progress;
+      const projectPoint = (name) => {
+        const image = imageOf(points[name], t);
+        return finite(image) ? view.project(image) : null;
+      };
+      const origin = projectPoint(selected);
+      const otherOrigin = projectPoint(other);
+      const selectedGap = origin ? separation(position, origin) : Infinity;
+      const otherGap = otherOrigin ? separation(position, otherOrigin) : Infinity;
       if (Math.min(selectedGap, otherGap) <= 13) {
         const name = selectedGap <= otherGap ? selected : other;
         const anchor = name === selected ? origin : otherOrigin;
-        return { kind: "move", name, offset: point(position.x - anchor.x, position.y - anchor.y) };
+        return { kind: "move", name, offset: subtract(position, anchor) };
       }
-      if (separation(position, rotationHandle(origin, selected)) <= 13) return { kind: "rotate", name: selected };
+      if (canvas === source && origin && separation(position, rotationHandle(origin, selected)) <= 13) {
+        return { kind: "rotate", name: selected };
+      }
       return { kind: "click", name: selected };
     }
 
-    function beginPointer(event) {
+    function beginPointer(event, canvas) {
       if (!event.isPrimary || event.button !== 0 || gesture) return;
-      const position = pointerPosition(event);
-      const hit = pointerHit(position);
-      gesture = { ...hit, id: event.pointerId, start: position };
-      source.setPointerCapture(event.pointerId);
+      if (canvas === target) stop();
+      showTargetStatus("");
+      const position = pointerPosition(event, canvas);
+      const hit = pointerHit(position, canvas);
+      gesture = { ...hit, canvas, id: event.pointerId, start: position };
+      canvas.setPointerCapture(event.pointerId);
       if (hit.kind !== "click") {
         cancelTravel(hit.name);
         selectPoint(hit.name);
         refreshPoints();
-        source.style.cursor = "grabbing";
+        canvas.style.cursor = "grabbing";
       }
     }
 
-    function movePointer(event) {
-      const position = pointerPosition(event);
+    function movePointer(event, canvas) {
+      const position = pointerPosition(event, canvas);
       if (!gesture) {
-        source.style.cursor = pointerHit(position).kind === "click" ? "crosshair" : "grab";
+        canvas.style.cursor = pointerHit(position, canvas).kind === "click" ? "crosshair" : "grab";
         return;
       }
-      if (gesture.id !== event.pointerId) return;
-      if (gesture.kind === "move") {
-        const { offset, name } = gesture;
-        points[name] = pointAt(point(position.x - offset.x, position.y - offset.y), true);
-        refreshPoints();
-      } else if (gesture.kind === "rotate") {
+      if (gesture.id !== event.pointerId || gesture.canvas !== canvas) return;
+      if (gesture.kind === "rotate") {
         const origin = sourceView.project(points[gesture.name]);
         if (separation(position, origin) > 3) {
           const angle = Math.atan2(origin.y - position.y, position.x - origin.x) * 180 / Math.PI;
           rotatePoint(gesture.name, angle);
         }
+        return;
       }
+      if (gesture.kind !== "move") return;
+      const { offset, name } = gesture;
+      const destination = subtract(position, offset);
+      if (canvas === source) points[name] = pointAt(destination, true);
+      else {
+        const edge = point(Math.max(0, Math.min(targetView.width, destination.x)),
+          Math.max(0, Math.min(targetView.height, destination.y)));
+        const image = unproject(targetView, edge);
+        const z = preimageAt(image, progress, points[name]);
+        reportPreimage(z);
+        if (!z) return;
+        points[name] = z;
+      }
+      refreshPoints();
     }
 
-    function endPointer(event) {
-      if (gesture?.id !== event.pointerId) return;
+    function endPointer(event, canvas) {
+      if (gesture?.id !== event.pointerId || gesture.canvas !== canvas) return;
       const { kind, name, start } = gesture;
       gesture = null;
-      source.style.cursor = "crosshair";
+      canvas.style.cursor = "crosshair";
       if (event.type !== "pointerup" || kind !== "click") return;
-      const position = pointerPosition(event);
+      const position = pointerPosition(event, canvas);
       if (separation(start, position) > 9) return;
-      const end = pointAt(position, false);
-      if (end) movePointTo(name, end);
+      if (canvas === target) moveImageTo(name, unproject(targetView, position));
+      else {
+        const end = pointAt(position, false);
+        if (end) movePointTo(name, end);
+      }
     }
 
     function specialPoint() {
@@ -1915,6 +2080,7 @@
     }
 
     function chooseMap(name) {
+      showTargetStatus("");
       stop();
       cancelTravel();
       map = maps[name];
@@ -1938,8 +2104,8 @@
         : map.cut ? "查看支点" : "无临界点";
       byId("pole").hidden = !(map.critical && map.pole);
       for (const [i, span] of [map.domain.x, map.domain.y].entries()) {
-        coordinateInputs[i].min = -span;
-        coordinateInputs[i].max = span;
+        coordinateInputs[i].min = map.mobius ? "" : -span;
+        coordinateInputs[i].max = map.mobius ? "" : span;
       }
       updateProgress(1);
       stop();
@@ -2022,10 +2188,12 @@
         drawTarget();
       });
     }
-    source.addEventListener("pointerdown", beginPointer);
-    source.addEventListener("pointermove", movePointer);
-    for (const event of ["pointerup", "pointercancel", "lostpointercapture"]) {
-      source.addEventListener(event, endPointer);
+    for (const canvas of [source, target]) {
+      canvas.addEventListener("pointerdown", (event) => beginPointer(event, canvas));
+      canvas.addEventListener("pointermove", (event) => movePointer(event, canvas));
+      for (const event of ["pointerup", "pointercancel", "lostpointercapture"]) {
+        canvas.addEventListener(event, (input) => endPointer(input, canvas));
+      }
     }
     heading.addEventListener("input", () => rotatePoint(selected, heading.valueAsNumber));
     coordinateInputs.forEach((input) => input.addEventListener("focus", () => cancelTravel(selected)));
@@ -2033,6 +2201,7 @@
       event.preventDefault();
       cancelTravel(selected);
       points[selected] = point(coordinateInputs[0].valueAsNumber, coordinateInputs[1].valueAsNumber);
+      showTargetStatus("");
       refreshPoints();
     });
     byId("pair").addEventListener("click", () => {
