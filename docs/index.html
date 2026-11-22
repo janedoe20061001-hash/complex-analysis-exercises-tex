@@ -206,6 +206,23 @@
     details a { color: var(--accent); }
 
 
+    .mobius-form { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 14px; padding: 10px 14px; border-bottom: 1px solid var(--border); }
+    .mobius-fields { flex: 1 1 510px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+    .mobius-field, .mobius-actions { display: flex; align-items: center; gap: 7px; }
+    .mobius-field { min-width: 0; padding: 5px 7px; border-radius: 7px; background: var(--soft); font-size: 13px; }
+    .mobius-field span { white-space: nowrap; }
+    .mobius-field i { margin-inline-end: 2px; font: italic 17px Cambria, serif; }
+    .mobius-field input { min-width: 0; width: 100%; min-height: 33px; border: 1px solid #cddbe0; border-radius: 6px; padding: 4px 7px; background: var(--surface); color: var(--ink); font: 14px Consolas, monospace; }
+    .mobius-status { flex-basis: 100%; margin: 0; color: #a0323e; font-size: 13px; }
+    #equation:has(.mobius-equation) { min-width: 0; white-space: normal; overflow-wrap: anywhere; }
+    .plot-actions:has(.mobius-equation) { min-width: 0; flex-wrap: wrap; }
+    .mobius-equation { display: inline-flex; align-items: center; vertical-align: middle; gap: 4px; }
+    .mobius-fraction { display: inline-grid; justify-items: stretch; text-align: center; line-height: 1.15; padding-inline: 2px; }
+    .mobius-fraction span { padding: 0 4px; }
+    .mobius-fraction span + span { border-top: 1px solid currentColor; }
+    @media (max-width: 660px) {
+      .mobius-field { flex-direction: column; align-items: stretch; gap: 3px; }
+    }
     .curve-panel { margin-inline: 10px; padding: 8px 3px 11px; border-bottom: 0; border-top: 1px solid var(--border); }
     .curve-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 8px; }
     .curve-card { min-width: 0; padding: 10px; border: 1px solid var(--border); border-radius: 9px; background: #f8fafb; }
@@ -289,7 +306,7 @@
           <button class="choice" data-map="cos" type="button" aria-label="余弦 z" aria-pressed="false"><span class="formula">cos z</span></button>
           <button class="choice" data-map="inverse" type="button" aria-label="z 的倒数" aria-pressed="false"><span class="formula">1/z</span></button>
           <button class="choice" data-map="joukowski" type="button" aria-label="儒可夫斯基变换 z 加 1 除以 z" aria-pressed="false"><span class="formula">z + 1/z</span></button>
-          <button class="choice" data-map="cayley" type="button" aria-label="莫比乌斯变换 (z−i)/(z+i)" aria-pressed="false"><span class="name">莫比乌斯</span></button>
+          <button class="choice" data-map="cayley" type="button" aria-label="莫比乌斯变换" aria-pressed="false"><span class="name">莫比乌斯</span></button>
           <button class="choice" data-map="log" type="button" aria-label="复对数主支" aria-pressed="false"><span class="formula">Log z</span></button>
           <button class="choice" data-map="sqrt" type="button" aria-label="复平方根主支" aria-pressed="false"><span class="formula">√z</span></button>
         </div>
@@ -308,6 +325,19 @@
           <button class="outline" type="button" data-joukowski-profile="airfoil" aria-pressed="false">偏心圆 → 机翼</button>
         </div>
       </div>
+
+      <form id="mobius-form" class="mobius-form" aria-label="莫比乌斯变换参数" hidden>
+        <div class="mobius-fields">
+          <label class="mobius-field"><span><i>k</i> 比例系数</span><input id="mobius-k" type="text" value="1" placeholder="如 2−i" maxlength="64" spellcheck="false" required></label>
+          <label class="mobius-field"><span><i>a</i> 零点</span><input id="mobius-a" type="text" value="i" maxlength="64" spellcheck="false" required></label>
+          <label class="mobius-field"><span><i>b</i> 极点</span><input id="mobius-b" type="text" value="−i" maxlength="64" spellcheck="false" required></label>
+        </div>
+        <div class="mobius-actions">
+          <button class="outline" type="submit">应用参数</button>
+          <button id="mobius-reset" class="outline" type="button">恢复默认</button>
+        </div>
+        <p id="mobius-status" class="mobius-status" role="status" hidden></p>
+      </form>
 
       <div class="plots">
         <figure class="plot">
@@ -464,6 +494,74 @@
       return inPolar(Math.exp(z.x), z.y);
     };
     const cosine = (z) => point(Math.cos(z.x) * Math.cosh(z.y), -Math.sin(z.x) * Math.sinh(z.y));
+    const subtract = (a, b) => point(a.x - b.x, a.y - b.y);
+    const defaultMobius = { k: point(1, 0), a: point(0, 1), b: point(0, -1) };
+
+    function parameterText(z) {
+      if (z.y === 0) return String(z.x).replace("-", "−");
+      const magnitude = Math.abs(z.y) === 1 ? "i" : String(Math.abs(z.y)) + "i";
+      if (z.x === 0) return (z.y < 0 ? "−" : "") + magnitude;
+      return String(z.x).replace("-", "−") + (z.y < 0 ? " − " : " + ") + magnitude;
+    }
+
+    function shiftedZ(z) {
+      if (z.x === 0 && z.y === 0) return "z";
+      if (z.x !== 0 && z.y !== 0) return "z − (" + parameterText(z) + ")";
+      if (z.x < 0 || z.y < 0) return "z + " + parameterText(scalePoint(z, -1));
+      return "z − " + parameterText(z);
+    }
+
+    function parseComplexParameter(raw, name) {
+      const input = raw.trim().replace(/[−–]/g, "-").replace(/\s+/g, "").toLowerCase();
+      const number = String.raw`(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?`;
+      const realPattern = new RegExp("^([+-]?" + number + ")$");
+      const complexPattern = new RegExp("^(?:([+-]?" + number + ")([+-])|([+-]?))(" + number + ")?i$");
+      const real = input.match(realPattern);
+      const complex = input.match(complexPattern);
+      if (real && Number.isFinite(Number(real[1]))) return point(Number(real[1]), 0);
+      if (complex) {
+        const sign = (complex[2] || complex[3]) === "-" ? -1 : 1;
+        const value = point(Number(complex[1] || 0), sign * Number(complex[4] || 1));
+        if (finite(value)) return value;
+      }
+      throw new Error(name + " 请输入形如 1、i 或 2−i 的复数。");
+    }
+
+    function makeMobius({ k, a, b }) {
+      if (k.x === 0 && k.y === 0) throw new Error("比例系数 k 不能为 0。");
+      if (samePoint(a, b)) throw new Error("零点 a 与极点 b 必须不同。");
+      const difference = subtract(b, a);
+      const distance = Math.hypot(difference.x, difference.y);
+      const amplitude = Math.hypot(k.x, k.y);
+      const residue = multiply(k, difference);
+      const strength = Math.hypot(residue.x, residue.y);
+      const domain = point(4 + 1.2 * Math.max(Math.abs(a.x), Math.abs(b.x)), 2.5 + 1.2 * Math.max(Math.abs(a.y), Math.abs(b.y)));
+      const image = point(1.9 * amplitude, 1.65 * amplitude);
+      if (!finite(domain) || !finite(image) || !Number.isFinite(distance) || !Number.isFinite(strength) ||
+          strength === 0 || distance / 1e5 === 0 || !Number.isFinite(1e6 / image.y)) {
+        throw new Error("参数尺度超出了绘图的数值范围。");
+      }
+      const canonical = samePoint(k, defaultMobius.k) && samePoint(a, defaultMobius.a) && samePoint(b, defaultMobius.b);
+      const factor = samePoint(k, defaultMobius.k) ? "" : "(" + parameterText(k) + ") ";
+      const fraction = '<span class="mobius-fraction"><span>' + shiftedZ(a) + '</span><span>' + shiftedZ(b) + '</span></span>';
+      const apply = (z) => multiply(k, multiply(subtract(z, a), reciprocal(subtract(z, b))));
+      return {
+        formula: '<span class="mobius-equation">' + factor + fraction + '</span>',
+        domain: canonical ? point(4, 2.5) : domain,
+        image,
+        apply,
+        derivative: (z) => scalePoint(multiply(residue, square(reciprocal(subtract(z, b)))), -1),
+        sample: [a, canonical ? point(1, 1) : mix(a, b, .5)],
+        pair: canonical ? [point(-1, 0), point(1, 0)] : [a, b],
+        pairLabel: canonical ? "看实轴的像" : "看零点与极点",
+        injective: true,
+        pole: b,
+        mobius: { k, a, b, amplitude, distance, residue, strength },
+        note: canonical ? "黄色曲线是实轴的像。上半平面映到单位圆内，下半平面映到圆外。"
+          : "黄色曲线是实轴的像。原平面上的 a 映到 0，b 映到 ∞，而原平面的 ∞ 映到 k。"
+      };
+    }
+
     const maps = {
       square: {
         formula: "z<sup>2</sup>",
@@ -556,24 +654,7 @@
           note: "黄色偏心圆经过 z = 1，并把 z = −1 包在内部。拖动进度条观察机翼截线逐渐成形，z = 1 的像在 w = 2 形成尖尾。左图虚线为单位圆。",
         }
       },
-      cayley: {
-        formula: "(z − i)/(z + i)",
-        domain: point(4, 2.5),
-        image: point(1.9, 1.65),
-        step: point(.5, .5),
-        apply: (z) => {
-          const r = reciprocal(point(z.x, z.y + 1));
-          return point(1 + 2 * r.y, -2 * r.x);
-        },
-        derivative: (z) => multiply(point(0, 2), square(reciprocal(point(z.x, z.y + 1)))),
-        sample: [point(0, 1), point(1, 1)],
-        pair: [point(-1, 0), point(1, 0)],
-        pairLabel: "看实轴的像",
-        injective: true,
-        pole: point(0, -1),
-        guide: "real",
-        note: "黄色线跟随图中实轴线段变形，右图虚线补出完整单位圆。上半平面映到圆内，下半平面除极点外映到圆外。",
-      },
+      cayley: makeMobius(defaultMobius),
       log: {
         formula: "Log z",
         domain: point(2.5, 2),
@@ -643,6 +724,7 @@
     let sourceView;
     let grid = [];
     let guide = [];
+    let mobiusGuide = null;
     let airfoilMode = false;
     const views = new Map();
 
@@ -1041,9 +1123,11 @@
       return String(Number(value.toFixed(3)));
     }
 
-    function complexText(z) {
-      const real = numberText(z.x);
-      const imaginary = Number(numberText(z.y));
+    function complexText(z, displayScale) {
+      const format = (value) => displayScale === undefined ? numberText(value)
+        : Math.abs(value) < displayScale * 1e-12 ? "0" : String(Number(value.toPrecision(7)));
+      const real = format(z.x);
+      const imaginary = Number(format(z.y));
       if (imaginary === 0) return real;
       const magnitude = Math.abs(imaginary) === 1 ? "i" : Math.abs(imaginary) + "i";
       if (real === "0") return imaginary < 0 ? "−" + magnitude : magnitude;
@@ -1070,7 +1154,147 @@
       });
     }
 
+    function niceStep(minimum) {
+      const decade = 10 ** Math.floor(Math.log10(minimum));
+      const ratio = minimum / decade;
+      return decade * (ratio <= 1 ? 1 : ratio <= 2 ? 2 : ratio <= 5 ? 5 : 10);
+    }
+
+    function mobiusGridLine(horizontal, fixed) {
+      const { b, distance } = map.mobius;
+      const across = horizontal ? b.y : b.x;
+      const along = horizontal ? b.x : b.y;
+      const delta = fixed - across;
+      const near = Math.max(Math.abs(delta) / 100, distance / 20000);
+      const far = Math.min(Number.MAX_VALUE / 50, Math.max(map.domain.x, map.domain.y)) * 24;
+      const lowLog = Math.log(Math.min(near, far));
+      const highLog = Math.log(far);
+      const offsets = Array.from({ length: 111 }, (_, index) => Math.exp(lowLog + (highLog - lowLog) * index / 110));
+      const negative = offsets.map((offset) => -offset).reverse();
+      const ranges = delta === 0 ? [negative, offsets] : [[...negative, 0, ...offsets]];
+      const segments = ranges.map((range) => range.map((offset) => {
+        const z = horizontal ? point(along + offset, fixed) : point(fixed, along + offset);
+        return { z, image: imageOf(z) };
+      }).filter(({ z, image }) => finite(z) && finite(image)));
+      return { horizontal, fixed, delta, segments };
+    }
+
+    function makeMobiusGrid() {
+      const { b, distance } = map.mobius;
+      const lines = [];
+      for (const horizontal of [true, false]) {
+        const anchor = horizontal ? b.y : b.x;
+        const span = horizontal ? map.domain.y : map.domain.x;
+        const unit = niceStep(span / 7);
+        const levels = new Set(Array.from({ length: 25 }, (_, index) => anchor + (index - 12) * unit));
+        for (const scale of [.08, .15, .26, .42, .7, 1.1, 1.7, 2.8, 4.6, 7.5, 12]) {
+          const delta = scale * distance;
+          for (const shift of [-delta, delta]) {
+            const candidate = anchor + shift;
+            if (Number.isFinite(candidate) && (Math.abs(shift) < unit || ![...levels].some((fixed) => Math.abs(fixed - candidate) < unit * .23))) {
+              levels.add(candidate);
+            }
+          }
+        }
+        for (const fixed of levels) {
+          if (Number.isFinite(fixed)) lines.push(mobiusGridLine(horizontal, fixed));
+        }
+      }
+      return lines;
+    }
+
+    function drawMobiusLine(view, t, line) {
+      const { ctx, width, height, center, scale, project } = view;
+      const { horizontal, fixed, delta } = line;
+      if (t === 0) {
+        const edge = horizontal ? center.y - fixed * scale : center.x + fixed * scale;
+        ctx.beginPath();
+        if (horizontal) {
+          if (edge < 0 || edge > height) return;
+          ctx.moveTo(0, edge);
+          ctx.lineTo(width, edge);
+        } else {
+          if (edge < 0 || edge > width) return;
+          ctx.moveTo(edge, 0);
+          ctx.lineTo(edge, height);
+        }
+        ctx.stroke();
+        return;
+      }
+      if (t < 1) {
+        for (const samples of line.segments) {
+          if (samples.length > 1) trace(view, samples, t);
+        }
+        return;
+      }
+
+      // In the image, u = w - k and z = b + residue / u.
+      // Each source grid line has an equation delta |u|^2 = normal · u.
+      const { k, residue, strength } = map.mobius;
+      const nx = horizontal ? residue.y / strength : residue.x / strength;
+      const ny = horizontal ? -residue.x / strength : residue.y / strength;
+      const origin = project(k);
+      const diagonal = Math.hypot(width, height);
+      const radius = Math.abs(strength / (2 * delta)) * scale;
+      ctx.beginPath();
+      if (delta === 0 || radius > diagonal * 1e6) {
+        const reach = diagonal + separation(center, origin);
+        ctx.moveTo(origin.x - ny * reach, origin.y - nx * reach);
+        ctx.lineTo(origin.x + ny * reach, origin.y + nx * reach);
+      } else {
+        if (!Number.isFinite(radius) || radius < .8) return;
+        const signedRadius = Math.sign(delta) * radius;
+        const x = origin.x + nx * signedRadius;
+        const y = origin.y - ny * signedRadius;
+        if (Math.hypot(x - center.x, y - center.y) > radius + diagonal) return;
+        ctx.arc(x, y, radius, 0, Math.PI * 2);
+      }
+      ctx.stroke();
+    }
+
+    function drawMobiusLattice(view) {
+      const { ctx, center, scale, width, height } = view;
+      const step = niceStep(36 / scale) * scale;
+      if (!Number.isFinite(step) || step <= 0) return;
+      ctx.beginPath();
+      for (let offset = step; offset < width / 2; offset += step) {
+        ctx.moveTo(center.x - offset, 0);
+        ctx.lineTo(center.x - offset, height);
+        ctx.moveTo(center.x + offset, 0);
+        ctx.lineTo(center.x + offset, height);
+      }
+      for (let offset = step; offset < height / 2; offset += step) {
+        ctx.moveTo(0, center.y - offset);
+        ctx.lineTo(width, center.y - offset);
+        ctx.moveTo(0, center.y + offset);
+        ctx.lineTo(width, center.y + offset);
+      }
+      ctx.strokeStyle = "#1d3549";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+
+    function drawMobiusGuide(view, t) {
+      const { ctx, project, width, height } = view;
+      ctx.strokeStyle = colors.guide;
+      ctx.lineWidth = 1.8;
+      drawMobiusLine(view, t, mobiusGuide);
+      if (t !== 1) return;
+      const k = project(map.mobius.k);
+      if (k.x < 5 || k.x > width - 5 || k.y < 5 || k.y > height - 5) return;
+      ctx.beginPath();
+      ctx.arc(k.x, k.y, 3.5, 0, 2 * Math.PI);
+      ctx.fillStyle = colors.ink;
+      ctx.fill();
+      ctx.stroke();
+      ctx.font = "11px Consolas, monospace";
+      ctx.textAlign = "left";
+      ctx.fillStyle = colors.guide;
+      ctx.fillText("w = k", Math.min(k.x + 7, width - 39), Math.max(13, k.y - 9));
+    }
+
     function makeGrid() {
+      if (map.mobius) return makeMobiusGrid();
       const lines = [];
       for (const horizontal of [true, false]) {
         const fixedSpan = horizontal ? map.domain.y : map.domain.x;
@@ -1103,7 +1327,6 @@
         }, 256);
       }
       if (map.guide === "circle") return traceSamples((fraction) => inPolar(1, 2 * Math.PI * fraction));
-      if (map.guide === "real") return traceSamples((fraction) => point((2 * fraction - 1) * map.domain.x, 0));
       return [];
     }
 
@@ -1130,6 +1353,7 @@
     function drawAxes(view, isSource) {
       const { ctx, width, height, center, scale } = view;
       ctx.clearRect(0, 0, width, height);
+      if (map.mobius && !isSource) drawMobiusLattice(view);
       ctx.beginPath();
       ctx.moveTo(15, center.y);
       ctx.lineTo(width - 15, center.y);
@@ -1141,18 +1365,19 @@
       ctx.stroke();
       ctx.setLineDash([]);
 
-      const unit = scale >= 34 ? 1 : scale >= 18 ? 2 : 4;
+      const unit = map.mobius ? niceStep(38 / scale) : scale >= 34 ? 1 : scale >= 18 ? 2 : 4;
+      const label = (value) => value < .01 || value >= 10000 ? value.toExponential(1) : String(Number(value.toPrecision(3)));
       ctx.font = "11px Consolas, monospace";
       ctx.fillStyle = "#9ab0c9";
       ctx.textAlign = "center";
       for (let i = unit; i * scale < width / 2 - 43; i += unit) {
-        ctx.fillText(String(i), center.x + i * scale, height - 8);
-        ctx.fillText("−" + i, center.x - i * scale, height - 8);
+        ctx.fillText(label(i), center.x + i * scale, height - 8);
+        ctx.fillText("−" + label(i), center.x - i * scale, height - 8);
       }
       ctx.textAlign = "right";
       for (let i = unit; i * scale < height / 2 - 19; i += unit) {
-        ctx.fillText(String(i), 26, center.y - i * scale + 4);
-        ctx.fillText("−" + i, 26, center.y + i * scale + 4);
+        ctx.fillText(label(i), 26, center.y - i * scale + 4);
+        ctx.fillText("−" + label(i), 26, center.y + i * scale + 4);
       }
       const symbol = isSource ? "z" : "w";
       ctx.fillStyle = "#d5e4f8";
@@ -1180,6 +1405,16 @@
 
     function drawGrid(view, t) {
       const { ctx } = view;
+      if (map.mobius) {
+        for (const line of grid) {
+          ctx.strokeStyle = line.horizontal ? colors.horizontal : colors.vertical;
+          ctx.globalAlpha = line.delta === 0 ? .75 : .36;
+          ctx.lineWidth = line.delta === 0 ? 1.4 : 1;
+          drawMobiusLine(view, t, line);
+        }
+        ctx.globalAlpha = 1;
+        return;
+      }
       const emphasis = airfoilMode ? .36 : 1;
       for (const line of grid) {
         ctx.strokeStyle = line.horizontal ? colors.horizontal : colors.vertical;
@@ -1192,15 +1427,7 @@
 
     function drawGuides(view, t, isSource) {
       const { ctx, center, project, scale, width } = view;
-      if (!isSource && t === 1 && map.guide === "real") {
-        ctx.beginPath();
-        ctx.arc(center.x, center.y, scale, 0, 2 * Math.PI);
-        ctx.strokeStyle = colors.guide;
-        ctx.lineWidth = 1.3;
-        ctx.setLineDash([4, 5]);
-        ctx.stroke();
-        ctx.setLineDash([]);
-      }
+      if (map.mobius) drawMobiusGuide(view, t);
       if (airfoilMode && isSource) {
         ctx.beginPath();
         ctx.arc(center.x, center.y, scale, 0, 2 * Math.PI);
@@ -1395,8 +1622,9 @@
     function drawSource() {
       sourceView = makeView(source, map.domain);
       drawPlot(sourceView, 0, true);
-      byId("source-a").textContent = complexText(points.a);
-      byId("source-b").textContent = complexText(points.b);
+      const displayScale = map.mobius ? 0 : undefined;
+      byId("source-a").textContent = complexText(points.a, displayScale);
+      byId("source-b").textContent = complexText(points.b, displayScale);
     }
 
     function describeLocalChange(z) {
@@ -1427,7 +1655,7 @@
       for (const name of ["a", "b"]) {
         const image = imageOf(points[name], progress);
         const text = image === null ? map.pole ? "∞（极点）" : "未定义"
-          : finite(image) ? complexText(image) : "超出数值范围";
+          : finite(image) ? complexText(image, progress === 1 ? map.mobius?.amplitude : undefined) : "超出数值范围";
         byId("target-" + name).textContent = text;
         const readout = byId(name === "a" ? "angle-result" : "angle-result-b");
         const description = describeLocalChange(points[name]);
@@ -1692,10 +1920,16 @@
       airfoilMode = false;
       grid = makeGrid();
       guide = makeGuide();
+      mobiusGuide = map.mobius ? mobiusGridLine(true, 0) : null;
       points = { a: map.sample[0], b: map.sample[1] };
       zoom.value = "1";
       mapButtons.forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.map === name)));
       updateMapNotes();
+      byId("mobius-form").hidden = !map.mobius;
+      byId("mobius-status").hidden = true;
+      if (map.mobius) {
+        for (const name of ["k", "a", "b"]) byId("mobius-" + name).value = parameterText(map.mobius[name]);
+      }
       byId("pair").textContent = map.pairLabel || "查看不同点同像";
       byId("critical").disabled = specialPoint() === null;
       byId("critical").textContent = map.critical ? "查看临界点" : map.pole ? "查看极点"
@@ -1724,6 +1958,22 @@
     resize.observe(source);
     resize.observe(target);
 
+    byId("mobius-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      try {
+        const [k, a, b] = ["k", "a", "b"].map((name) => parseComplexParameter(byId("mobius-" + name).value, name));
+        maps.cayley = makeMobius({ k, a, b });
+        chooseMap("cayley");
+      } catch (error) {
+        const status = byId("mobius-status");
+        status.textContent = error.message;
+        status.hidden = false;
+      }
+    });
+    byId("mobius-reset").addEventListener("click", () => {
+      maps.cayley = makeMobius(defaultMobius);
+      chooseMap("cayley");
+    });
     mapButtons.forEach((button) => button.addEventListener("click", () => chooseMap(button.dataset.map)));
     profileButtons.forEach((button) => button.addEventListener("click", () => chooseProfile(button.dataset.joukowskiProfile)));
     pointButtons.forEach((button) => button.addEventListener("click", () => {
